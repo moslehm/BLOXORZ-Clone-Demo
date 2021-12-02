@@ -290,10 +290,10 @@ function drawScene(gl, deltaTime, state) {
     // sort objects by nearness to camera
     let sorted = state.objects.sort((a, b) => {
         let aCentroidFour = vec4.fromValues(a.centroid[0], a.centroid[1], a.centroid[2], 1.0);
-        vec4.transformMat4(aCentroidFour, aCentroidFour, a.model.modelMatrix);
+        vec4.transformMat4(aCentroidFour, aCentroidFour, a.modelMatrix);
 
         let bCentroidFour = vec4.fromValues(b.centroid[0], b.centroid[1], b.centroid[2], 1.0);
-        vec4.transformMat4(bCentroidFour, bCentroidFour, b.model.modelMatrix);
+        vec4.transformMat4(bCentroidFour, bCentroidFour, b.modelMatrix);
 
         return vec3.distance(state.camera.position, vec3.fromValues(aCentroidFour[0], aCentroidFour[1], aCentroidFour[2]))
             >= vec3.distance(state.camera.position, vec3.fromValues(bCentroidFour[0], bCentroidFour[1], bCentroidFour[2])) ? -1 : 1;
@@ -360,6 +360,15 @@ function drawScene(gl, deltaTime, state) {
             gl.uniform3fv(object.programInfo.uniformLocations.specularVal, object.material.specular);
             gl.uniform1f(object.programInfo.uniformLocations.nVal, object.material.n);
 
+            // let mainLight = state.pointLights[0];
+            // gl.uniform3fv(gl.getUniformLocation(object.programInfo.program, 'mainLight.position'), mainLight.position);
+            // gl.uniform3fv(gl.getUniformLocation(object.programInfo.program, 'mainLight.colour'), mainLight.colour);
+            // gl.uniform1f(gl.getUniformLocation(object.programInfo.program, 'mainLight.strength'), mainLight.strength);
+            // gl.uniform1f(gl.getUniformLocation(object.programInfo.program, 'mainLight.linear'), mainLight.linear);
+            // gl.uniform1f(gl.getUniformLocation(object.programInfo.program, 'mainLight.quadratic'), mainLight.quadratic);
+
+            gl.uniform3fv(gl.getUniformLocation(object.programInfo.program, 'uCameraPosition'), state.camera.position);
+
             gl.uniform1i(object.programInfo.uniformLocations.numLights, state.numLights);
             if (state.pointLights.length > 0) {
                 for (let i = 0; i < state.pointLights.length; i++) {
@@ -377,7 +386,7 @@ function drawScene(gl, deltaTime, state) {
                 gl.bindVertexArray(object.buffers.vao);
 
                 //check for diffuse texture and apply it
-                if (object.model.texture != null) {
+                if (object.material.shaderType === 3) {
                     state.samplerExists = 1;
                     gl.activeTexture(gl.TEXTURE0);
                     gl.uniform1i(object.programInfo.uniformLocations.samplerExists, state.samplerExists);
@@ -390,7 +399,7 @@ function drawScene(gl, deltaTime, state) {
                 }
 
                 //check for normal texture and apply it
-                if (object.model.textureNorm != null) {
+                if (object.material.shaderType === 4) {
                     state.samplerNormExists = 1;
                     gl.activeTexture(gl.TEXTURE1);
                     gl.uniform1i(object.programInfo.uniformLocations.normalSamplerExists, state.samplerNormExists);
