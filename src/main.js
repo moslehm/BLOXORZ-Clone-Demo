@@ -56,19 +56,33 @@ async function main() {
         `#version 300 es
         in vec3 aPosition;
         in vec3 aNormal;
+        in vec2 aUV;
+        in vec3 aVertBitang;
 
         uniform mat4 uProjectionMatrix;
         uniform mat4 uViewMatrix;
         uniform mat4 uModelMatrix;
+        uniform mat4 normalMatrix;
+        uniform vec3 uCameraPosition;
 
+        out vec2 oUV;
+        out vec3 oFragPosition;
+        out vec3 normalInterp;
         out vec3 oNormal;
+        out vec3 oCameraPosition;
+        out vec3 oVertBitang;
 
         void main() {
-            // Simply use this normal so no error is thrown
-            oNormal = aNormal;
-
-            // Postion of the fragment in world space
+            // Position of the fragment in world space
             gl_Position = uProjectionMatrix * uViewMatrix * uModelMatrix * vec4(aPosition, 1.0);
+            oUV = aUV;
+            oFragPosition = (uModelMatrix * vec4(aPosition, 1.0)).xyz;
+            oNormal = normalize(vec3(uModelMatrix * vec4(aNormal, 0.0)).xyz);
+            oVertBitang = aVertBitang;
+            normalInterp = vec3(normalMatrix * vec4(aNormal, 0.0));
+
+            // Pass the camera position to the fragment shader
+            oCameraPosition = uCameraPosition;
         }
         `;
 
@@ -77,11 +91,99 @@ async function main() {
         #define MAX_LIGHTS 20
         precision highp float;
 
+        struct PointLight {
+            vec3 position;
+            vec3 colour;
+            float strength;
+            float linear;
+            float quadratic;
+        };
+
+        in vec3 oFragPosition;
+        in vec3 normalInterp;
+        in vec3 oCameraPosition;
+        in vec3 oNormal;
+        in vec3 oVertBitang;
+        in vec2 oUV;
+
+        // Light uniforms for more than one light support
+        uniform int numLights;
+        uniform PointLight[MAX_LIGHTS] pointLights;
+
+        uniform int uTextureNormExists;
+        uniform sampler2D uTextureNorm;
+        uniform int samplerExists;
+        uniform sampler2D uTexture;
         uniform vec3 diffuseVal;
+        uniform vec3 ambientVal;
+        uniform vec3 specularVal;
+        uniform float nVal;
 
         out vec4 fragColor;
+
+        vec3 calculateColour(PointLight uLight, vec3 normal) {
+            vec3 lightDirection = normalize(uLight.position - oFragPosition);
+            vec3 viewDirection = normalize(oCameraPosition - oFragPosition);
+            vec3 halfVal = normalize(viewDirection + lightDirection);
+
+            // Ambient value
+            vec3 ambient = ambientVal * uLight.colour;
+
+            // Diffuse value
+            float diff = max(dot(normal, lightDirection), 0.0);
+            if (samplerExists == 1){
+                vec3 textureColour = texture(uTexture, oUV).rgb;
+                vec3 color = mix(diffuseVal, textureColour, 0.5);
+            } else {
+                vec3 color = diffuseVal;
+            }
+            vec3 diffuse = diffuseVal * diff * uLight.colour;
+
+            // Specular value
+            float spec = pow(max(dot(normal, halfVal), 0.0), nVal);
+            vec3 specular = (spec * specularVal) * uLight.colour;
+
+            float dist = length(uLight.position - oFragPosition);
+            float attenuation = uLight.strength / (1.0 + uLight.linear * dist + uLight.quadratic * (dist * dist));
+            diffuse *= attenuation;
+            specular *= attenuation;
+
+            // Add all values together for final color
+            vec3 color = (ambient + diffuse + specular) * attenuation;
+            return color;
+        }
+
         void main() {
-            fragColor = vec4(diffuseVal, 1.0);
+            vec3 normal;
+            if (uTextureNormExists == 1) {
+                // normal displacement
+                normal = texture(uTextureNorm, oUV).xyz;
+                // move from range [0.0, 1.0] to [-1.0, 1.0]
+                normal = (normal * 2.0) - 1.0;
+                // scale the normal to increases the visual effect
+                normal = normal * 5.0;
+                // calculate bitangent as NxT
+                vec3 bitangent = cross(oNormal, oVertBitang);
+                // make the TBN matrix as a mat3
+                mat3 TBN = mat3(oVertBitang, bitangent, oNormal);
+                // Apply the TBN matrix to the normal vector and normalize
+                normal = normalize(TBN * normal);
+            } else {
+                normal = normalize(normalInterp);
+            }
+
+            vec3 total = vec3(0, 0, 0);
+            for (int i = 0; i < numLights; i++) {
+                total += calculateColour(pointLights[i], normal);
+            }
+
+            // vec3 total = calculateColour(pointLights[0], normal);
+            if (samplerExists == 1){
+                vec3 textureColour = texture(uTexture, oUV).rgb;
+                fragColor = vec4(total * textureColour, 1.0);
+            } else {
+                fragColor = vec4(total, 1.0);
+            }
         }
         `;
 
