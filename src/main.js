@@ -338,6 +338,8 @@ function drawScene(gl, deltaTime, state) {
             mat4.scale(modelMatrix, modelMatrix, object.model.scale);
             mat4.translate(modelMatrix, modelMatrix, negCentroid);
 
+            // console.log("MATRIX ", modelMatrix);
+
             if (object.parent) {
                 let parent = getObject(state, object.parent);
                 if (parent.model && parent.model.modelMatrix) {
