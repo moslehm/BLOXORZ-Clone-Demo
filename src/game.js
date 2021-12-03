@@ -43,7 +43,8 @@ class Game {
         }, false);
 
         // example - set an object in onStart before starting our render loop!
-        this.cube = getObject(this.state, "cube1");
+        //OUR BLOCK 
+        this.cube = getObject(this.state, "tempCube");
         const otherCube = getObject(this.state, "cube2"); // we wont save this as instance var since we dont plan on using it in update
 
         // example - create sphere colliders on our two objects as an example, we give 2 objects colliders otherwise
@@ -65,6 +66,39 @@ class Game {
                 case "d":
                     this.cube.translate(vec3.fromValues(-0.5, 0, 0));
                     break;
+
+                case "w":
+                    this.cube.translate(vec3.fromValues(0, 0, 0.5));
+                    break;
+
+                case "s":
+                    this.cube.translate(vec3.fromValues(0, 0, -0.5));
+                    break;
+                
+                //rotating 
+                case "q":
+                    // mat4.rotateX(state.model.rotation,state.model.rotation,-0.5 );
+                    // this.cube.rotate('x', 35);
+                    // console.log("rotate", this.cube.modelMatrix);
+                    this.cube.translate(vec3.fromValues(0, -0.2, 0));
+                    console.log("BEFORE: " , (this.cube.model.rotation));
+                    mat4.rotateX(this.cube.model.rotation,this.cube.model.rotation,1.6);
+                    console.log("AFTER: " , (this.cube.model.rotation));
+                    // this.cube.translate(vec3.fromValues(0, -0.2, 0));
+                    //console.log("rotate2", this.cube.centroid.modelMatrix);
+                    break;
+
+                case "e":
+                    // this.cube.rotate('x', -90);
+                    this.cube.translate(vec3.fromValues(0, 0.2, 0));
+                    mat4.rotateX(this.cube.model.rotation,this.cube.model.rotation,-1.6);
+                    //this.cube.translate(vec3.fromValues(0, 0.2, 0));
+                    break;
+                
+                case "z":
+                    this.cube.translate(vec3.fromValues(0, 0, -0.5));
+                    mat4.rotateX(this.cube.model.rotation,this.cube.model.rotation,1.6);
+
 
                 default:
                     break;

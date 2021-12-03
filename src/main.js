@@ -236,6 +236,8 @@ function drawScene(gl, deltaTime, state) {
             mat4.scale(modelMatrix, modelMatrix, object.model.scale);
             mat4.translate(modelMatrix, modelMatrix, negCentroid);
 
+            // console.log("MATRIX ", modelMatrix);
+
             if (object.parent) {
                 let parent = getObject(state, object.parent);
                 if (parent.model && parent.model.modelMatrix) {
@@ -257,6 +259,7 @@ function drawScene(gl, deltaTime, state) {
             gl.uniform3fv(object.programInfo.uniformLocations.ambientVal, object.material.ambient);
             gl.uniform3fv(object.programInfo.uniformLocations.specularVal, object.material.specular);
             gl.uniform1f(object.programInfo.uniformLocations.nVal, object.material.n);
+
 
             gl.uniform1i(object.programInfo.uniformLocations.numLights, state.numLights);
             if (state.pointLights.length > 0) {
