@@ -150,6 +150,51 @@ class Game {
     onUpdate(deltaTime) {
         // TODO - Here we can add game logic, like moving game objects, detecting collisions, you name it. Examples of functions can be found in sceneFunctions
 
+        //ROTATING COLLISION OBJECT 
+        // this.diamond = getObject(this.state, "diamond");
+        // this.diamond.rotate('x', deltaTime * 0.5);
+
+        this.collideCube = getObject(this.state, "collideCube");
+        this.collideCube.rotate('x', deltaTime * 1);
+        this.collideCube.rotate('y', deltaTime * 1);
+        this.collideCube.rotate('z', deltaTime * 1);
+
+        //console.log(deltaTime);
+
+
+        // while(deltaTime != 0 ){
+
+        //     this.collideCube.translate(vec3.fromValues(0, -0.2, 0));
+        //     deltaTime == 0; 
+            
+        // }
+
+        
+        // this.collideCube.translate(vec3.fromValues(0, 0, -0.1));
+        // console.log(this.collideCube.model.position[2]);
+
+        if(this.collideCube.model.position[2]<-2.0){
+            this.collideCube.translate(vec3.fromValues(0, 0, 0.2));
+            console.log("1",this.collideCube.model.position[2] ); 
+            // console.log("which");
+        }
+        // if(this.collideCube.model.position[2]<2.0){
+        //     this.collideCube.translate(vec3.fromValues(0, 0, -0.2));
+        //     console.log("2",this.collideCube.model.position[2] ); 
+        // }
+
+
+        // if (deltaTime < 5){
+        //     this.collideCube.translate(vec3.fromValues(0, 0, 0.2));
+        //     "increase"
+        //     console.log("increase",  deltaTime ); 
+        // } 
+
+        // if (deltaTime > 5){
+        //     this.collideCube.translate(vec3.fromValues(0, 0, -0.2));
+        //     deltaTime =0; 
+        //     console.log("decrease", deltaTime); 
+        // }
         // example: Rotate a single object we defined in our start method
         // this.cube.rotate('x', deltaTime * 0.5);
 
