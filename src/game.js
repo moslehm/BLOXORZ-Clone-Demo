@@ -24,7 +24,7 @@ class Game {
 
     // example - function to check if an object is colliding with collidable objects
     // checkCollision(object) {
-    //     // loop over all the other collidable objects 
+    //     // loop over all the other collidable objects
     //     this.collidableObjects.forEach(otherObject => {
     //         // do a check to see if we have collided, if we have we can call object.onCollide(otherObject) which will
     //         // call the onCollide we define for that specific object. This way we can handle collisions identically for all
@@ -43,9 +43,7 @@ class Game {
         }, false);
 
         // example - set an object in onStart before starting our render loop!
-        //OUR BLOCK 
-        this.cube = getObject(this.state, "tempCube");
-        const otherCube = getObject(this.state, "cube2"); // we wont save this as instance var since we dont plan on using it in update
+        // const otherCube = getObject(this.state, "cube2"); // we wont save this as instance var since we dont plan on using it in update
 
         // example - create sphere colliders on our two objects as an example, we give 2 objects colliders otherwise
         // no collision can happen
@@ -54,52 +52,105 @@ class Game {
         // });
         // this.createSphereCollider(otherCube, 0.5);
 
-        // example - setting up a key press event to move an object in the scene
-        document.addEventListener("keypress", (e) => {
-            e.preventDefault();
+        // OUR BLOCK
+        const player = getObject(this.state, "playerBlock");
+        let camera = this.state.camera;
 
+        // example - setting up a key press event to move an object in the scene
+        document.addEventListener("keydown", (e) => {
+            e.preventDefault();
+            console.log(e.code);
+            let at;
+            let up;
+            let right;
             switch (e.key) {
                 case "a":
-                    this.cube.translate(vec3.fromValues(0.5, 0, 0));
+                    player.centroid = vec3.fromValues(1.0, 0.0, 0.25);
+                    player.rotate('z', -90.0 * Math.PI / 180.0);
                     break;
-
                 case "d":
-                    this.cube.translate(vec3.fromValues(-0.5, 0, 0));
+                    player.centroid = vec3.fromValues(0.5, 0.0, 0.25);
+                    player.rotate('z', 90.0 * Math.PI / 180.0);
                     break;
-
                 case "w":
-                    this.cube.translate(vec3.fromValues(0, 0, 0.5));
+                    player.centroid = vec3.fromValues(0.25, 0.0, 0.5);
+                    player.rotate('x', 90.0 * Math.PI / 180.0);
                     break;
-
                 case "s":
-                    this.cube.translate(vec3.fromValues(0, 0, -0.5));
+                    player.centroid = vec3.fromValues(0.25, 0.0, 0.0);
+                    player.rotate('x', -90.0 * Math.PI / 180.0);
                     break;
-                
-                //rotating 
-                case "q":
-                    // mat4.rotateX(state.model.rotation,state.model.rotation,-0.5 );
-                    // this.cube.rotate('x', 35);
-                    // console.log("rotate", this.cube.modelMatrix);
-                    this.cube.translate(vec3.fromValues(0, -0.2, 0));
-                    console.log("BEFORE: " , (this.cube.model.rotation));
-                    mat4.rotateX(this.cube.model.rotation,this.cube.model.rotation,1.6);
-                    console.log("AFTER: " , (this.cube.model.rotation));
-                    // this.cube.translate(vec3.fromValues(0, -0.2, 0));
-                    //console.log("rotate2", this.cube.centroid.modelMatrix);
+                case "ArrowRight":
+                    // Get look-at vector by subtracting position from center and normalizing
+                    at = vec3.normalize([], vec3.subtract([], state.camera.center, state.camera.position));
+                    // Make sure up is normalized
+                    up = vec3.normalize([], state.camera.up);
+                    // Get right vector by doing the cross product of at and up
+                    right = vec3.cross([], at, up);
+                    if (event.getModifierState("Shift")) {
+                        // Rotate camera around Y (other direction)
+                        vec3.add(state.camera.center, state.camera.center, vec3.scale([], right, 0.1));
+                    } else{
+                        vec3.add(camera.position, camera.position, vec3.scale([], right, 0.1));
+                        vec3.add(camera.center, camera.center, vec3.scale([], right, 0.1));
+                    }
                     break;
+                case "ArrowLeft":
+                    // Get look-at vector by subtracting position from center and normalizing
+                    at = vec3.normalize([], vec3.subtract([], state.camera.center, state.camera.position));
+                    // Make sure up is normalized
+                    up = vec3.normalize([], state.camera.up);
+                    // Get right vector by doing the cross product of at and up
+                    right = vec3.cross([], at, up);
+                    if (event.getModifierState("Shift")) {
+                        // Rotate camera around Y
+                        vec3.subtract(state.camera.center, state.camera.center, vec3.scale([], right, 0.1));
+                    } else {
+                        vec3.add(camera.position, camera.position, vec3.scale([], right, -0.1));
+                        vec3.add(camera.center, camera.center, vec3.scale([], right, -0.1));
 
-                case "e":
-                    // this.cube.rotate('x', -90);
-                    this.cube.translate(vec3.fromValues(0, 0.2, 0));
-                    mat4.rotateX(this.cube.model.rotation,this.cube.model.rotation,-1.6);
-                    //this.cube.translate(vec3.fromValues(0, 0.2, 0));
+                    }
                     break;
-                
-                case "z":
-                    this.cube.translate(vec3.fromValues(0, 0, -0.5));
-                    mat4.rotateX(this.cube.model.rotation,this.cube.model.rotation,1.6);
-
-
+                case "ArrowUp":
+                    if (event.getModifierState("Shift")) {
+                        // Rotate camera about X axis (pitch)
+                        // Get look-at vector by subtracting position from center and normalizing
+                        let at = vec3.normalize([], vec3.subtract([], camera.center, camera.position));
+                        // Make sure up is normalized
+                        let up = vec3.normalize([], camera.up);
+                        let right = vec3.cross([], at, up);
+                        // Get new center, update it, then use it to update up
+                        let new_center = vec3.add(camera.center, camera.center, vec3.scale([], up, 0.1));
+                        let new_at = vec3.normalize([], vec3.subtract([], new_center, camera.position));
+                        vec3.normalize(camera.up, vec3.cross([], right, new_at));
+                    } else if (event.getModifierState("Control")) {
+                        vec3.add(camera.center, camera.center, vec3.fromValues(0.0, 0.1, 0.0));
+                        vec3.add(camera.position, camera.position, vec3.fromValues(0.0, 0.1, 0.0));
+                    } else {
+                        let at = vec3.scale([], vec3.normalize([], vec3.subtract([], camera.position, camera.center)), -0.1);
+                        vec3.add(camera.position, camera.position, at);
+                    }
+                    break;
+                case "ArrowDown":
+                    if (event.getModifierState("Shift")) {
+                        // Rotate camera about X axis (pitch)
+                        // Get look-at vector by subtracting position from center and normalizing
+                        at = vec3.normalize([], vec3.subtract([], state.camera.center, state.camera.position));
+                        // Make sure up is normalized
+                        up = vec3.normalize([], state.camera.up);
+                        right = vec3.cross([], at, up);
+                        // Get new center, update it, then use it to update up
+                        let new_center = vec3.subtract(state.camera.center, state.camera.center, vec3.scale([], up, 0.1));
+                        let new_at = vec3.normalize([], vec3.subtract([], new_center, state.camera.position));
+                        vec3.normalize(state.camera.up, vec3.cross([], right, new_at));
+                    } else if (event.getModifierState("Control")) {
+                        vec3.add(camera.center, camera.center, vec3.fromValues(0.0, -0.1, 0.0));
+                        vec3.add(camera.position, camera.position, vec3.fromValues(0.0, -0.1, 0.0));
+                    } else {
+                        let at = vec3.scale([], vec3.normalize([], vec3.subtract([], camera.position, camera.center)), 0.1);
+                        vec3.add(camera.position, camera.position, at);
+                    }
+                    break;
                 default:
                     break;
             }
@@ -149,7 +200,7 @@ class Game {
     // Runs once every frame non stop after the scene loads
     onUpdate(deltaTime) {
         // TODO - Here we can add game logic, like moving game objects, detecting collisions, you name it. Examples of functions can be found in sceneFunctions
-
+        // console.log(deltaTime)
         // example: Rotate a single object we defined in our start method
         // this.cube.rotate('x', deltaTime * 0.5);
 
@@ -160,7 +211,7 @@ class Game {
         //     }
         // });
 
-        // simulate a collision between the first spawned object and 'cube' 
+        // simulate a collision between the first spawned object and 'cube'
         // if (this.spawnedObjects[0].collidable) {
         //     this.spawnedObjects[0].onCollide(this.cube);
         // }

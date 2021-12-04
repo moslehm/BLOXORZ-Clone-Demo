@@ -206,6 +206,7 @@ async function main() {
     };
 
     state.numLights = state.pointLights.length;
+    state.camera.center = vec3.add([], state.camera.position, state.camera.front);
 
     const now = new Date();
     for (let i = 0; i < state.loadObjects.length; i++) {
@@ -316,12 +317,13 @@ function drawScene(gl, deltaTime, state) {
 
             // View Matrix & Camera ....
             let viewMatrix = mat4.create();
-            let camFront = vec3.fromValues(0, 0, 0);
-            vec3.add(camFront, state.camera.position, state.camera.front);
+            // let center = vec3.fromValues(0, 0, 0);
+            // vec3.add(center, state.camera.position, state.camera.front);
+
             mat4.lookAt(
                 viewMatrix,
                 state.camera.position,
-                camFront,
+                state.camera.center,
                 state.camera.up,
             );
             gl.uniformMatrix4fv(object.programInfo.uniformLocations.view, false, viewMatrix);
@@ -331,9 +333,10 @@ function drawScene(gl, deltaTime, state) {
             // Model Matrix ....
             let modelMatrix = mat4.create();
             let negCentroid = vec3.fromValues(0.0, 0.0, 0.0);
-            vec3.negate(negCentroid, object.centroid);
+            let centroid = object.centroid;
+            vec3.negate(negCentroid, centroid);
             mat4.translate(modelMatrix, modelMatrix, object.model.position);
-            mat4.translate(modelMatrix, modelMatrix, object.centroid);
+            mat4.translate(modelMatrix, modelMatrix, centroid);
             mat4.mul(modelMatrix, modelMatrix, object.model.rotation);
             mat4.scale(modelMatrix, modelMatrix, object.model.scale);
             mat4.translate(modelMatrix, modelMatrix, negCentroid);
