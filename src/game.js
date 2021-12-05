@@ -173,6 +173,8 @@ class Game {
         this.createSphereCollider(collideCube, 0.2);
         this.createSphereCollider(button, 0.01);
         // 0 = standing, 1 = rolling along z, 2 = rolling along x
+        this.board = new Board(player.model.position[2], player.model.position[0]);
+        // 0 = standing, 1 = along x, 2 = along z
         player.rolling = 0;
         let camera = this.state.camera;
 
@@ -204,6 +206,7 @@ class Game {
                         player.rotate('z', -90.0 * Math.PI / 180.0);
                         player.translate(vec3.fromValues(0.5, 0.0, 0.0));
                     }
+                    this.board.movePlayer("left");
                     break;
                 case "d":
                     if (!player.rolling){
@@ -219,6 +222,7 @@ class Game {
                         player.rotate('z', 90.0 * Math.PI / 180.0);
                         player.translate(vec3.fromValues(-0.5, 0.0, 0.0));
                     }
+                    this.board.movePlayer("right");
                     break;
                 case "w":
                     if (!player.rolling){
@@ -234,6 +238,7 @@ class Game {
                         player.rotate('x', 90.0 * Math.PI / 180.0);
                         player.translate(vec3.fromValues(0.0, 0.0, 0.5));
                     }
+                    this.board.movePlayer("up");
                     break;
                 case "s":
                     if (!player.rolling){
@@ -249,10 +254,12 @@ class Game {
                         player.rotate('x', -90.0 * Math.PI / 180.0);
                         player.translate(vec3.fromValues(0.0, 0.0, -0.5));
                     }
+                    this.board.movePlayer("down");
                     break;
                 case "=":
                     vec3.copy(player.model.position, player.original.position);
                     player.model.rotation = [...player.original.rotation];
+                    this.board.reset(player.model.position[2], player.model.position[0]);
                     player.rolling = 0;
                     break;
                 case "arrowright":
