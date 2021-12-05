@@ -54,33 +54,85 @@ class Game {
 
         // OUR BLOCK
         const player = getObject(this.state, "playerBlock");
+        // 0 = standing, 1 = rolling along z, 2 = rolling along x
+        player.rolling = 0;
         let camera = this.state.camera;
+
+        let worldToLocalRotation = mat4.transpose(mat4.create(), player.model.rotation);
 
         // example - setting up a key press event to move an object in the scene
         document.addEventListener("keydown", (e) => {
             e.preventDefault();
             console.log(e.code);
+            let axis;
             let at;
             let up;
             let right;
-            switch (e.key) {
+            switch (e.key.toLowerCase()) {
                 case "a":
-                    player.centroid = vec3.fromValues(1.0, 0.0, 0.25);
-                    player.rotate('z', -90.0 * Math.PI / 180.0);
+                    if (!player.rolling){
+                        // player.centroid = vec3.fromValues(1.0, 0.0, 0.25);
+                        // Player is standing, tip over the block
+                        player.rotate('z', -90.0 * Math.PI / 180.0);
+                        player.translate(vec3.fromValues(0.75, -0.25, 0));
+                        player.rolling = 1;
+                    } else if (player.rolling == 1) {
+                        // Player is sideways, bring it back up
+                        player.rotate('z', -90.0 * Math.PI / 180.0);
+                        player.translate(vec3.fromValues(0.75, 0.25, 0));
+                        player.rolling = 0;
+                    } else {
+                        // Player is sideways, roll it along z
+                        player.rotate('z', -90.0 * Math.PI / 180.0);
+                        player.translate(vec3.fromValues(0.5, 0.0, 0.0));
+                    }
                     break;
                 case "d":
-                    player.centroid = vec3.fromValues(0.5, 0.0, 0.25);
-                    player.rotate('z', 90.0 * Math.PI / 180.0);
+                    if (!player.rolling){
+                        // player.centroid = vec3.fromValues(0.5, 0.0, 0.25);
+                        player.rotate('z', 90.0 * Math.PI / 180.0);
+                        player.translate(vec3.fromValues(-0.75, -0.25, 0));
+                        player.rolling = 1;
+                    } else if (player.rolling == 1) {
+                        player.rotate('z', 90.0 * Math.PI / 180.0);
+                        player.translate(vec3.fromValues(-0.75, 0.25, 0));
+                        player.rolling = 0;
+                    } else {
+                        player.rotate('z', 90.0 * Math.PI / 180.0);
+                        player.translate(vec3.fromValues(-0.5, 0.0, 0.0));
+                    }
                     break;
                 case "w":
-                    player.centroid = vec3.fromValues(0.25, 0.0, 0.5);
-                    player.rotate('x', 90.0 * Math.PI / 180.0);
+                    if (!player.rolling){
+                        // player.centroid = vec3.fromValues(0.25, 0.0, 0.5);
+                        player.rotate('x', 90.0 * Math.PI / 180.0);
+                        player.translate(vec3.fromValues(0.0, -0.25, 0.75));
+                        player.rolling = 2;
+                    } else if (player.rolling == 2) {
+                        player.rotate('x', 90.0 * Math.PI / 180.0);
+                        player.translate(vec3.fromValues(0.0, 0.25, 0.75));
+                        player.rolling = 0;
+                    } else {
+                        player.rotate('x', 90.0 * Math.PI / 180.0);
+                        player.translate(vec3.fromValues(0.0, 0.0, 0.5));
+                    }
                     break;
                 case "s":
-                    player.centroid = vec3.fromValues(0.25, 0.0, 0.0);
-                    player.rotate('x', -90.0 * Math.PI / 180.0);
+                    if (!player.rolling){
+                        // player.centroid = vec3.fromValues(0.25, 0.0, 0.0);
+                        player.rotate('x', -90.0 * Math.PI / 180.0);
+                        player.translate(vec3.fromValues(0.0, -0.25, -0.75));
+                        player.rolling = 2;
+                    } else if (player.rolling == 2) {
+                        player.rotate('x', -90.0 * Math.PI / 180.0);
+                        player.translate(vec3.fromValues(0.0, 0.25, -0.75));
+                        player.rolling = 0;
+                    } else {
+                        player.rotate('x', -90.0 * Math.PI / 180.0);
+                        player.translate(vec3.fromValues(0.0, 0.0, -0.5));
+                    }
                     break;
-                case "ArrowRight":
+                case "arrowright":
                     // Get look-at vector by subtracting position from center and normalizing
                     at = vec3.normalize([], vec3.subtract([], state.camera.center, state.camera.position));
                     // Make sure up is normalized
@@ -95,7 +147,7 @@ class Game {
                         vec3.add(camera.center, camera.center, vec3.scale([], right, 0.1));
                     }
                     break;
-                case "ArrowLeft":
+                case "arrowleft":
                     // Get look-at vector by subtracting position from center and normalizing
                     at = vec3.normalize([], vec3.subtract([], state.camera.center, state.camera.position));
                     // Make sure up is normalized
@@ -111,7 +163,7 @@ class Game {
 
                     }
                     break;
-                case "ArrowUp":
+                case "arrowup":
                     if (event.getModifierState("Shift")) {
                         // Rotate camera about X axis (pitch)
                         // Get look-at vector by subtracting position from center and normalizing
@@ -131,7 +183,7 @@ class Game {
                         vec3.add(camera.position, camera.position, at);
                     }
                     break;
-                case "ArrowDown":
+                case "arrowdown":
                     if (event.getModifierState("Shift")) {
                         // Rotate camera about X axis (pitch)
                         // Get look-at vector by subtracting position from center and normalizing
@@ -156,7 +208,7 @@ class Game {
             }
         });
 
-        this.customMethod(); // calling our custom method! (we could put spawning logic, collision logic etc in there ;) )
+        // this.customMethod(); // calling our custom method! (we could put spawning logic, collision logic etc in there ;) )
 
         // example: spawn some stuff before the scene starts
         // for (let i = 0; i < 10; i++) {
