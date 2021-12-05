@@ -181,7 +181,7 @@ class Game {
         // example - setting up a key press event to move an object in the scene
         document.addEventListener("keydown", (e) => {
             e.preventDefault();
-            console.log(e.code);
+            console.log(e.key.toLowerCase());
             let axis;
             let at;
             let up;
@@ -249,6 +249,11 @@ class Game {
                         player.rotate('x', -90.0 * Math.PI / 180.0);
                         player.translate(vec3.fromValues(0.0, 0.0, -0.5));
                     }
+                    break;
+                case "=":
+                    vec3.copy(player.model.position, player.original.position);
+                    player.model.rotation = [...player.original.rotation];
+                    player.rolling = 0;
                     break;
                 case "arrowright":
                     // Get look-at vector by subtracting position from center and normalizing
