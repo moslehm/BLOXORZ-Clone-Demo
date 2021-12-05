@@ -293,6 +293,12 @@ function drawScene(gl, deltaTime, state) {
     gl.depthFunc(gl.LEQUAL); // Near things obscure far things
     gl.disable(gl.CULL_FACE); // Cull the backface of our objects to be more efficient
     gl.cullFace(gl.BACK);
+
+    gl.depthMask(false);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+
     // gl.frontFace(gl.CCW);
     gl.clearDepth(1.0); // Clear everything
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -313,6 +319,25 @@ function drawScene(gl, deltaTime, state) {
     sorted.map((object) => {
         gl.useProgram(object.programInfo.program);
         {
+            if (object.material.alpha < 1.0) {
+                // turn off depth masking
+                // enable blending and specify blending function
+                // clear depth for correct transparency rendering
+                gl.depthMask(false);
+                gl.enable(gl.BLEND);
+                gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+            }
+            else {
+                // disable blending
+                // enable depth masking and z-buffering
+                // specify depth function
+                // clear depth with 1.0
+                gl.disable(gl.BLEND);
+                gl.depthMask(true);
+                gl.enable(gl.DEPTH_TEST);
+                gl.depthFunc(gl.LEQUAL);
+            }
+
             // Projection Matrix ....
             let projectionMatrix = mat4.create();
             let fovy = 90.0 * Math.PI / 180.0; // Vertical field of view in radians
