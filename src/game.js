@@ -130,12 +130,12 @@ class Game {
             // }
 
             // when the button is being pushed....  //  but player is object B 
-            if(object.name == "button1"){ 
-                
+            if (object.name == "button1") {
+
                 var A = vec3.fromValues(object.model.position[0], object.model.position[1], object.model.position[2]);
                 vec3.transformMat4(A, A, object.modelMatrix);
 
-                var B = vec3.fromValues(otherObject.model.position[0]+0.50, otherObject.model.position[1]-0.25, otherObject.model.position[2]);
+                var B = vec3.fromValues(otherObject.model.position[0] + 0.50, otherObject.model.position[1] - 0.25, otherObject.model.position[2]);
                 vec3.transformMat4(B, B, otherObject.modelMatrix);
 
                 var distance = vec3.distance(A, B);
@@ -143,16 +143,16 @@ class Game {
             }
 
 
-            else if(object.name == "collideCube"){
+            else if (object.name == "collideCube") {
                 var A = vec3.fromValues(object.model.position[0], object.model.position[1], object.model.position[2]);
                 vec3.transformMat4(A, A, object.modelMatrix);
 
-                var B = vec3.fromValues(otherObject.model.position[0]+0.50, otherObject.model.position[1], otherObject.model.position[2]);
+                var B = vec3.fromValues(otherObject.model.position[0] + 0.50, otherObject.model.position[1], otherObject.model.position[2]);
                 vec3.transformMat4(B, B, otherObject.modelMatrix);
 
                 var distance = vec3.distance(A, B);
             }
-            
+
 
 
             else {
@@ -172,7 +172,7 @@ class Game {
                 // console.log("collide", object.collider.flag);
                 // return object.onCollide;
                 object.collider.flag = true; //WE COLLIDED
-                console.log("collide", object.collider.flag,  object.name, otherObject.name);
+                console.log("collide", object.collider.flag, object.name, otherObject.name);
             }
 
             // return object.collider.flag;
@@ -455,11 +455,18 @@ class Game {
 
 
         // collision w the NPC CUBE 
-        this.checkCollision(this.collideCube); 
-        if (this.collideCube.collider.flag == true){
-            console.log("collided... YOU DIED"); 
-        }
+        this.checkCollision(this.collideCube);
+        if (this.collideCube.collider.flag == true) {
+            console.log("collided... YOU DIED");
 
+            //restart the scene?
+            //this.onStart(); 
+            //var resetPos = vec3.fromValues(-0.5, 0.015, -1);
+
+            // this.player.model.position = resetPos;
+            // this.player.model.rotation = [0.9999999999999999,  0,   0, 0,  0, 1,  0, 0, 0, 0, 0.9999999999999999, 0, 0,0,0, 1]
+
+        }
         // this.checkCollision(this.player);
 
         // if (this.player.collider.flag == true) {
