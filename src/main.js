@@ -58,6 +58,7 @@ async function main() {
         in vec3 aNormal;
         in vec2 aUV;
         in vec3 aVertBitang;
+        // in vec3 aVertColour;
 
         uniform mat4 uProjectionMatrix;
         uniform mat4 uViewMatrix;
@@ -71,6 +72,7 @@ async function main() {
         out vec3 oNormal;
         out vec3 oCameraPosition;
         out vec3 oVertBitang;
+        // out vec3 oVertColour;
 
         void main() {
             // Position of the fragment in world space
@@ -79,6 +81,7 @@ async function main() {
             oFragPosition = (uModelMatrix * vec4(aPosition, 1.0)).xyz;
             oNormal = normalize(vec3(uModelMatrix * vec4(aNormal, 0.0)).xyz);
             oVertBitang = aVertBitang;
+            // oVertColour = aVertColour;
             normalInterp = vec3(normalMatrix * vec4(aNormal, 0.0));
 
             // Pass the camera position to the fragment shader
@@ -104,6 +107,7 @@ async function main() {
         in vec3 oCameraPosition;
         in vec3 oNormal;
         in vec3 oVertBitang;
+        // in vec3 oVertColour;
         in vec2 oUV;
 
         // Light uniforms for more than one light support
@@ -220,6 +224,10 @@ async function main() {
             addPlane(object, state);
         } else if (object.type.includes("Custom")) {
             addCustom(object, state);
+        } else if (object.type.includes("player")) {
+            addPlayer(object, state);
+        } else if (object.type.includes("tile")) {
+            addTile(object, state);
         }
     }
 
