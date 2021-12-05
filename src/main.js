@@ -122,6 +122,7 @@ async function main() {
         uniform vec3 ambientVal;
         uniform vec3 specularVal;
         uniform float nVal;
+        uniform float alphaVal;
 
         out vec4 fragColor;
 
@@ -184,9 +185,9 @@ async function main() {
             // vec3 total = calculateColour(pointLights[0], normal);
             if (samplerExists == 1){
                 vec3 textureColour = texture(uTexture, oUV).rgb;
-                fragColor = vec4(total * textureColour, 1.0);
+                fragColor = vec4(total * textureColour, alphaVal);
             } else {
-                fragColor = vec4(total, 1.0);
+                fragColor = vec4(total, alphaVal);
             }
         }
         `;
@@ -372,6 +373,7 @@ function drawScene(gl, deltaTime, state) {
             gl.uniform3fv(object.programInfo.uniformLocations.ambientVal, object.material.ambient);
             gl.uniform3fv(object.programInfo.uniformLocations.specularVal, object.material.specular);
             gl.uniform1f(object.programInfo.uniformLocations.nVal, object.material.n);
+            gl.uniform1f(object.programInfo.uniformLocations.alphaVal, object.material.alpha);
 
             // let mainLight = state.pointLights[0];
             // gl.uniform3fv(gl.getUniformLocation(object.programInfo.program, 'mainLight.position'), mainLight.position);

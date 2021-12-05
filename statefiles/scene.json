@@ -21,7 +21,7 @@
                     ],
                     "n": 10.000002,
                     "shaderType": 1,
-                    "alpha": 1
+                    "alpha": 0.5
                 },
                 "type": "cubeCustom",
                 "position": [
