@@ -3,6 +3,7 @@ class Player extends RenderObject {
         super(glContext, object);
         this.type = "player";
         this.rolling = 0;
+
         this.model = { ...this.model,
             vertices: [
                 0.5, 0.0, 0.0,
@@ -197,6 +198,10 @@ class Player extends RenderObject {
                 0.0, 1.0, 0.0, 1.0,
                 0.0, 1.0, 0.0, 1.0,
             ]
+        };
+        this.original = {
+            position: vec3.copy([], object.position),
+            rotation: [...object.rotation],
         };
     }
 

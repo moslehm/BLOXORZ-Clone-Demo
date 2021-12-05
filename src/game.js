@@ -3,8 +3,8 @@ class Game {
         this.state = state;
         this.spawnedObjects = [];
         this.collidableObjects = [];
-        this.direction = 0.02;  // for the npc cube translation   
-        this.wallUp = 0.01; // wall for button interaction 
+        this.direction = 0.02;  // for the npc cube translation
+        this.wallUp = 0.01; // wall for button interaction
         this.counter = 0;  // a work around for now for button interation
     }
 
@@ -13,13 +13,14 @@ class Game {
         console.log("Custom method!");
     }
 
-    // AUTO MOVE THE CUBE -- translates back and forth -- collision object 
+    // AUTO MOVE THE CUBE -- translates back and forth -- collision object
     directionCube(object) {
 
-        // if hit 1, switch directions 
+        // if hit 1, switch directions
         if (this.collideCube.model.position[2] > 2) {
             this.direction = -0.02;
         }
+
 
         // if starting position 
         if (this.collideCube.model.position[2] == -0.5) {
@@ -44,6 +45,7 @@ class Game {
                 this.wall.translate(vec3.fromValues(0, 0.5, 0));
                 this.button.collider.flag = false;
                 this.counter = 0;
+
             },
             3 * 990 // amt time for wall to go back up 
         );
@@ -62,31 +64,31 @@ class Game {
     }
 
 
-    // // toggle wall when button is pressed 
+    // // toggle wall when button is pressed
     // toggleWall(){
 
-    //     this.wallUp *= -1; 
+    //     this.wallUp *= -1;
 
     //     if (this.wallUp < 0){
-    //         console.log("wall was up toggle down "); 
-    //         this.wallUp= -0.01; 
-    //         return this.wallUp;  
+    //         console.log("wall was up toggle down ");
+    //         this.wallUp= -0.01;
+    //         return this.wallUp;
     //     }
 
     //     else{
     //         console.log("wall down toggle up ")
-    //         this.wallUp = 0.01; 
-    //         return this.wallUp;  
+    //         this.wallUp = 0.01;
+    //         return this.wallUp;
     //     }
 
     //     // if (!this.wallUp) {
-    //     //     console.log("wall was down put back up "); 
-    //     //     this.wallUp = true; 
+    //     //     console.log("wall was down put back up ");
+    //     //     this.wallUp = true;
 
-    //     //     //wall was down, move it back up 
-    //     //     this.wall.translate(vec3.fromValues(0, 1, 0));  
+    //     //     //wall was down, move it back up
+    //     //     this.wall.translate(vec3.fromValues(0, 1, 0));
 
-    //     //     return true; 
+    //     //     return true;
 
     //     // }
     // }
@@ -202,11 +204,12 @@ class Game {
 
         // OUR BLOCK
         const player = getObject(this.state, "playerBlock");
-        const collideCube = getObject(this.state, "collideCube"); // OUR NPC CUBE 
+        const collideCube = getObject(this.state, "collideCube"); // OUR NPC CUBE
         const button = getObject(this.state, "button1"); // BUTTON
-        //const wall = getObject(this.state, "wall1"); 
+        //const wall = getObject(this.state, "wall1");
         // const player = getObject(this.state, "tempCube");
         //let camera = this.state.camera;
+
 
         //HALF THE BLOCKS FOR COLLISION 
         const playerHalf1 = getObject(this.state, "playerBlock");
@@ -223,15 +226,16 @@ class Game {
 
 
         // 0 = standing, 1 = rolling along z, 2 = rolling along x
+        this.board = new Board(player.model.position[2], player.model.position[0]);
+        // 0 = standing, 1 = along x, 2 = along z
         player.rolling = 0;
-        let camera = this.state.camera;
 
         let worldToLocalRotation = mat4.transpose(mat4.create(), player.model.rotation);
 
         // example - setting up a key press event to move an object in the scene
         document.addEventListener("keydown", (e) => {
             e.preventDefault();
-            console.log(e.code);
+            console.log(e.key.toLowerCase());
             let axis;
             let at;
             let up;
@@ -254,6 +258,7 @@ class Game {
                         player.rotate('z', -90.0 * Math.PI / 180.0);
                         player.translate(vec3.fromValues(0.5, 0.0, 0.0));
                     }
+                    this.board.movePlayer("left");
                     break;
                 case "d":
                     if (!player.rolling) {
@@ -269,6 +274,7 @@ class Game {
                         player.rotate('z', 90.0 * Math.PI / 180.0);
                         player.translate(vec3.fromValues(-0.5, 0.0, 0.0));
                     }
+                    this.board.movePlayer("right");
                     break;
                 case "w":
                     if (!player.rolling) {
@@ -284,6 +290,7 @@ class Game {
                         player.rotate('x', 90.0 * Math.PI / 180.0);
                         player.translate(vec3.fromValues(0.0, 0.0, 0.5));
                     }
+                    this.board.movePlayer("up");
                     break;
                 case "s":
                     if (!player.rolling) {
@@ -299,6 +306,13 @@ class Game {
                         player.rotate('x', -90.0 * Math.PI / 180.0);
                         player.translate(vec3.fromValues(0.0, 0.0, -0.5));
                     }
+                    this.board.movePlayer("down");
+                    break;
+                case "=":
+                    vec3.copy(player.model.position, player.original.position);
+                    player.model.rotation = [...player.original.rotation];
+                    this.board.reset(player.model.position[2], player.model.position[0]);
+                    player.rolling = 0;
                     break;
                 case "arrowright":
                     // Get look-at vector by subtracting position from center and normalizing
@@ -307,12 +321,12 @@ class Game {
                     up = vec3.normalize([], state.camera.up);
                     // Get right vector by doing the cross product of at and up
                     right = vec3.cross([], at, up);
-                    if (event.getModifierState("Shift")) {
+                    if (event.getModifierState("Control")) {
                         // Rotate camera around Y (other direction)
                         vec3.add(state.camera.center, state.camera.center, vec3.scale([], right, 0.1));
                     } else {
-                        vec3.add(camera.position, camera.position, vec3.scale([], right, 0.1));
-                        vec3.add(camera.center, camera.center, vec3.scale([], right, 0.1));
+                        vec3.add(state.camera.position, state.camera.position, vec3.scale([], right, 0.1));
+                        vec3.add(state.camera.center, state.camera.center, vec3.scale([], right, 0.1));
                     }
                     break;
                 case "arrowleft":
@@ -322,37 +336,35 @@ class Game {
                     up = vec3.normalize([], state.camera.up);
                     // Get right vector by doing the cross product of at and up
                     right = vec3.cross([], at, up);
-                    if (event.getModifierState("Shift")) {
+                    if (event.getModifierState("Control")) {
                         // Rotate camera around Y
                         vec3.subtract(state.camera.center, state.camera.center, vec3.scale([], right, 0.1));
                     } else {
-                        vec3.add(camera.position, camera.position, vec3.scale([], right, -0.1));
-                        vec3.add(camera.center, camera.center, vec3.scale([], right, -0.1));
+                        vec3.add(state.camera.position, state.camera.position, vec3.scale([], right, -0.1));
+                        vec3.add(state.camera.center, state.camera.center, vec3.scale([], right, -0.1));
 
                     }
                     break;
                 case "arrowup":
-                    if (event.getModifierState("Shift")) {
+                    if (event.getModifierState("Control")) {
                         // Rotate camera about X axis (pitch)
                         // Get look-at vector by subtracting position from center and normalizing
-                        let at = vec3.normalize([], vec3.subtract([], camera.center, camera.position));
+                        let at = vec3.normalize([], vec3.subtract([], state.camera.center, state.camera.position));
                         // Make sure up is normalized
-                        let up = vec3.normalize([], camera.up);
+                        let up = vec3.normalize([], state.camera.up);
                         let right = vec3.cross([], at, up);
                         // Get new center, update it, then use it to update up
-                        let new_center = vec3.add(camera.center, camera.center, vec3.scale([], up, 0.1));
-                        let new_at = vec3.normalize([], vec3.subtract([], new_center, camera.position));
-                        vec3.normalize(camera.up, vec3.cross([], right, new_at));
-                    } else if (event.getModifierState("Control")) {
-                        vec3.add(camera.center, camera.center, vec3.fromValues(0.0, 0.1, 0.0));
-                        vec3.add(camera.position, camera.position, vec3.fromValues(0.0, 0.1, 0.0));
+                        let new_center = vec3.add(state.camera.center, state.camera.center, vec3.scale([], up, 0.1));
+                        let new_at = vec3.normalize([], vec3.subtract([], new_center, state.camera.position));
+                        vec3.normalize(state.camera.up, vec3.cross([], right, new_at));
                     } else {
-                        let at = vec3.scale([], vec3.normalize([], vec3.subtract([], camera.position, camera.center)), -0.1);
-                        vec3.add(camera.position, camera.position, at);
+                        let at = vec3.scale([], vec3.normalize([], vec3.subtract([], state.camera.position, state.camera.center)), -0.1);
+                        vec3.add(state.camera.center, state.camera.center, at);
+                        vec3.add(state.camera.position, state.camera.position, at);
                     }
                     break;
                 case "arrowdown":
-                    if (event.getModifierState("Shift")) {
+                    if (event.getModifierState("Control")) {
                         // Rotate camera about X axis (pitch)
                         // Get look-at vector by subtracting position from center and normalizing
                         at = vec3.normalize([], vec3.subtract([], state.camera.center, state.camera.position));
@@ -363,15 +375,33 @@ class Game {
                         let new_center = vec3.subtract(state.camera.center, state.camera.center, vec3.scale([], up, 0.1));
                         let new_at = vec3.normalize([], vec3.subtract([], new_center, state.camera.position));
                         vec3.normalize(state.camera.up, vec3.cross([], right, new_at));
-                    } else if (event.getModifierState("Control")) {
-                        vec3.add(camera.center, camera.center, vec3.fromValues(0.0, -0.1, 0.0));
-                        vec3.add(camera.position, camera.position, vec3.fromValues(0.0, -0.1, 0.0));
                     } else {
-                        let at = vec3.scale([], vec3.normalize([], vec3.subtract([], camera.position, camera.center)), 0.1);
-                        vec3.add(camera.position, camera.position, at);
+                        let at = vec3.scale([], vec3.normalize([], vec3.subtract([], state.camera.position, state.camera.center)), 0.1);
+                        vec3.add(state.camera.center, state.camera.center, at);
+                        vec3.add(state.camera.position, state.camera.position, at);
                     }
                     break;
 
+                case " ":
+                    vec3.add(state.camera.center, state.camera.center, vec3.fromValues(0.0, 0.1, 0.0));
+                    vec3.add(state.camera.position, state.camera.position, vec3.fromValues(0.0, 0.1, 0.0));
+                    break;
+                case "shift":
+                    vec3.add(state.camera.center, state.camera.center, vec3.fromValues(0.0, -0.1, 0.0));
+                    vec3.add(state.camera.position, state.camera.position, vec3.fromValues(0.0, -0.1, 0.0));
+                    break;
+                case "1":
+                    state.camera = state.cameras[0];
+                    break;
+                case "2":
+                    state.camera = state.cameras[1];
+                    break;
+                case "3":
+                    state.camera = state.cameras[2];
+                    break;
+                case "4":
+                    state.camera = state.cameras[3];
+                    break;
                 default:
                     break;
             }
@@ -426,18 +456,19 @@ class Game {
         // this.cube.rotate('x', deltaTime * 0.5);
 
 
+
         // Make our npc cube rotate 
         this.collideCube = getObject(this.state, "collideCube");
         this.collideCube.rotate('x', deltaTime * 1);
         this.collideCube.rotate('y', deltaTime * 1);
         this.collideCube.rotate('z', deltaTime * 1);
 
-        // Get the npc wall 
+        // Get the npc wall
         this.wall = getObject(this.state, "wall1");
         this.button = getObject(this.state, "button1");
         this.player = getObject(this.state, "playerBlock");
 
-        // Make our npc cube translate automatically -- moves back and forth 
+        // Make our npc cube translate automatically -- moves back and forth
         this.collideCube.translate(vec3.fromValues(0, 0, this.directionCube(this.collideCube)));
 
         //call our collision check method on our BUTTON
@@ -458,6 +489,7 @@ class Game {
         this.checkCollision(this.collideCube);
         if (this.collideCube.collider.flag == true) {
             console.log("collided... YOU DIED");
+
 
             //restart the scene?
             //this.onStart(); 
