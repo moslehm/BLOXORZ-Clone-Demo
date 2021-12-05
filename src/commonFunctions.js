@@ -59,8 +59,8 @@ function loadShader(gl, type, source) {
 }
 
 /**
- * 
- * @param {array of x,y,z vertices} vertices 
+ *
+ * @param {array of x,y,z vertices} vertices
  */
 function calculateCentroid(vertices, cb) {
     var center = vec3.fromValues(0.0, 0.0, 0.0);
@@ -196,6 +196,52 @@ function initNormalAttribute(gl, programInfo, normalArray) {
 
     return normalBuffer;
 }
+
+function initColourAttribute(gl, programInfo, colourArray) {
+
+    // Create a buffer for the positions.
+    const colourBuffer = gl.createBuffer();
+
+    // Select the buffer as the one to apply buffer
+    // operations to from here out.
+    gl.bindBuffer(gl.ARRAY_BUFFER, colourBuffer);
+
+    // Now pass the list of positions into WebGL to build the
+    // shape. We do this by creating a Float32Array from the
+    // JavaScript array, then use it to fill the current buffer.
+    gl.bufferData(
+        gl.ARRAY_BUFFER, // The kind of buffer this is
+        colourArray, // The data in an Array object
+        gl.STATIC_DRAW // We are not going to change this data, so it is static
+    );
+
+    // Tell WebGL how to pull out the positions from the position
+    // buffer into the vertexPosition attribute.
+    {
+        const numComponents = 4; // pull out 4 values per iteration, ie vec4
+        const type = gl.FLOAT; // the data in the buffer is 32bit floats
+        const normalize = false; // don't normalize between 0 and 1
+        const stride = 0; // how many bytes to get from one set of values to the next
+        // Set stride to 0 to use type and numComponents above
+        const offset = 0; // how many bytes inside the buffer to start from
+
+        // Set the information WebGL needs to read the buffer properly
+        gl.vertexAttribPointer(
+            programInfo.attribLocations.vertexColour,
+            numComponents,
+            type,
+            normalize,
+            stride,
+            offset
+        );
+        // Tell WebGL to use this attribute
+        gl.enableVertexAttribArray(
+            programInfo.attribLocations.vertexColour);
+    }
+
+    return colourBuffer;
+}
+
 
 function initTextureCoords(gl, programInfo, textureCoords) {
     if (textureCoords != null && textureCoords.length > 0) {
@@ -339,8 +385,8 @@ function getTextures(gl, imgPath) {
 
         image.onload = function () {
             gl.bindTexture(gl.TEXTURE_2D, texture);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
             gl.texImage2D(
@@ -373,8 +419,8 @@ function parseOBJFileToJSON(objFileURL) {
 }
 
 /**
- * 
- * @param {hex value of color} hex 
+ *
+ * @param {hex value of color} hex
  */
 function hexToRGB(hex) {
     let r = hex.substring(1, 3);
@@ -417,6 +463,24 @@ function addCube(object, state, vertShader = null, fragShader = null) {
     tempCube.setup();
     addObjectToScene(state, tempCube);
     return tempCube;
+}
+
+function addPlayer(object, state, vertShader = null, fragShader = null) {
+    let tempPlayer = new Player(state.gl, object);
+    tempPlayer.vertShader = vertShader ? vertShader : state.vertShaderSample;
+    tempPlayer.fragShader = fragShader ? fragShader : state.fragShaderSample;
+    tempPlayer.setup();
+    addObjectToScene(state, tempPlayer);
+    return tempPlayer;
+}
+
+function addTile(object, state, vertShader = null, fragShader = null) {
+    let tempTile = new Tile(state.gl, object);
+    tempTile.vertShader = vertShader ? vertShader : state.vertShaderSample;
+    tempTile.fragShader = fragShader ? fragShader : state.fragShaderSample;
+    tempTile.setup();
+    addObjectToScene(state, tempTile);
+    return tempTile;
 }
 
 function addPlane(object, state, vertShader = null, fragShader = null) {

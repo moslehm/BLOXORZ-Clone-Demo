@@ -20,6 +20,10 @@ async function spawnObject(object, state) {
         return await addPlane(object, state);
     } else if (object.type.includes("Custom")) {
         return await addCustom(object, state);
+    } else if (object.type.includes("player")) {
+        return await addPlayer(object, state);
+    } else if (object.type.includes("tile")) {
+        return await addTile(object, state);
     }
 }
 
