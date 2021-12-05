@@ -269,7 +269,7 @@ class Game {
                     up = vec3.normalize([], state.camera.up);
                     // Get right vector by doing the cross product of at and up
                     right = vec3.cross([], at, up);
-                    if (event.getModifierState("Shift")) {
+                    if (event.getModifierState("Control")) {
                         // Rotate camera around Y (other direction)
                         vec3.add(state.camera.center, state.camera.center, vec3.scale([], right, 0.1));
                     } else {
@@ -284,7 +284,7 @@ class Game {
                     up = vec3.normalize([], state.camera.up);
                     // Get right vector by doing the cross product of at and up
                     right = vec3.cross([], at, up);
-                    if (event.getModifierState("Shift")) {
+                    if (event.getModifierState("Control")) {
                         // Rotate camera around Y
                         vec3.subtract(state.camera.center, state.camera.center, vec3.scale([], right, 0.1));
                     } else {
