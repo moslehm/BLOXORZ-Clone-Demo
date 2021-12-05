@@ -25,14 +25,14 @@
                 },
                 "type": "cubeCustom",
                 "position": [
-                    -4.5,
+                    -4.25,
                     0,
-                    0
+                    -0.5
                 ],
                 "scale": [
-                    1,
-                    1,
-                    1
+                    1.25,
+                    1.25,
+                    1.25
                 ],
                 "diffuseTexture": "default.jpg",
                 "normalTexture": "defaultNorm.jpg",
@@ -318,7 +318,7 @@
                 },
                 "type": "cubeCustom",
                 "position": [
-                    0,
+                    -0.04,
                     0,
                     0
                 ],
@@ -756,9 +756,9 @@
                 "name": "button1",
                 "material": {
                     "diffuse": [
-                        0.00784313725490196,
-                        0.6941176470588235,
-                        0.1803921568627451
+                        0.5686274509803921,
+                        0.12549019607843137,
+                        0.6549019607843137
                     ],
                     "ambient": [
                         0.3,
