@@ -33,29 +33,30 @@ class Game {
         return (this.direction);
     }
 
-    setTimer() {
+    wallDown(){
+        this.wall.translate(vec3.fromValues(0, -0.5, 0));
+    }
+
+    setTimer() { // countdown timer --> applies these once timer hits 
         setTimeout(
             () => {
                 //this.wall.translate(vec3.fromValues(0, 0.02, 0));
-                this.wall.translate(vec3.fromValues(0, 0.2, 0));
+                this.wall.translate(vec3.fromValues(0, 0.5, 0));
                 this.button.collider.flag = false;
                 this.counter = 0; 
-                //this.counter = 0; 
-                //this.wall.translate(vec3.fromValues(0, 0.02, 0));
             },
-            5 * 1000
+            5 * 990 // amt time for wall to go back up 
         );
-
     }
 
-    disableButton() {
+    disableButton() { // while the timer goes 
         setInterval(
             () => {
-                this.counter += 1; 
+                //this.counter += 1; 
                 this.button.collider.flag = false;
                 //console.log("hello"); 
             },
-            5 * 1000
+            5 * 1000 //seconds change this later 
         );
 
     }
@@ -145,7 +146,7 @@ class Game {
                 // console.log("collide", object.collider.flag);
                 // return object.onCollide;
                 object.collider.flag = true; //WE COLLIDED
-                console.log("collide", object.collider.flag,  object.name, otherObject.name);
+                //console.log("collide", object.collider.flag,  object.name, otherObject.name);
             }
 
             // return object.collider.flag;
@@ -477,19 +478,25 @@ class Game {
 
         this.checkCollision(this.player);
 
+        console.log("COUNT", this.counter); 
+
         if (this.player.collider.flag == true) {
-            console.log("player collision");
+            //console.log("player collision");
             //this.disableButton(); 
             //console.log("wall toggled"); 
             if (this.counter < 1) {
                 //this.wall.translate(vec3.fromValues(0, -0.5, 0));
-                this.wall.translate(vec3.fromValues(0, -0.2, 0));
+                //this.wall.translate(vec3.fromValues(0, -0.2, 0));
+                this.wallDown(); 
+
+                this.disableButton();
+                this.setTimer()
             }
             //this.toggleWall();  // flips the sign 
             //this.disableButton(); 
-            //this.counter += 1;
-            this.disableButton();
-            this.setTimer();  //wall comes back up when timer hits 
+            this.counter += 1;
+            // this.disableButton();
+            // this.setTimer();  //wall comes back up when timer hits 
             //this.disableButton(); 
         }
 
