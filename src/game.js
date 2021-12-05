@@ -176,7 +176,6 @@ class Game {
         this.board = new Board(player.model.position[2], player.model.position[0]);
         // 0 = standing, 1 = along x, 2 = along z
         player.rolling = 0;
-        let camera = this.state.camera;
 
         let worldToLocalRotation = mat4.transpose(mat4.create(), player.model.rotation);
 
@@ -273,8 +272,8 @@ class Game {
                         // Rotate camera around Y (other direction)
                         vec3.add(state.camera.center, state.camera.center, vec3.scale([], right, 0.1));
                     } else {
-                        vec3.add(camera.position, camera.position, vec3.scale([], right, 0.1));
-                        vec3.add(camera.center, camera.center, vec3.scale([], right, 0.1));
+                        vec3.add(state.camera.position, state.camera.position, vec3.scale([], right, 0.1));
+                        vec3.add(state.camera.center, state.camera.center, vec3.scale([], right, 0.1));
                     }
                     break;
                 case "arrowleft":
@@ -288,8 +287,8 @@ class Game {
                         // Rotate camera around Y
                         vec3.subtract(state.camera.center, state.camera.center, vec3.scale([], right, 0.1));
                     } else {
-                        vec3.add(camera.position, camera.position, vec3.scale([], right, -0.1));
-                        vec3.add(camera.center, camera.center, vec3.scale([], right, -0.1));
+                        vec3.add(state.camera.position, state.camera.position, vec3.scale([], right, -0.1));
+                        vec3.add(state.camera.center, state.camera.center, vec3.scale([], right, -0.1));
 
                     }
                     break;
@@ -297,18 +296,18 @@ class Game {
                     if (event.getModifierState("Control")) {
                         // Rotate camera about X axis (pitch)
                         // Get look-at vector by subtracting position from center and normalizing
-                        let at = vec3.normalize([], vec3.subtract([], camera.center, camera.position));
+                        let at = vec3.normalize([], vec3.subtract([], state.camera.center, state.camera.position));
                         // Make sure up is normalized
-                        let up = vec3.normalize([], camera.up);
+                        let up = vec3.normalize([], state.camera.up);
                         let right = vec3.cross([], at, up);
                         // Get new center, update it, then use it to update up
-                        let new_center = vec3.add(camera.center, camera.center, vec3.scale([], up, 0.1));
-                        let new_at = vec3.normalize([], vec3.subtract([], new_center, camera.position));
-                        vec3.normalize(camera.up, vec3.cross([], right, new_at));
+                        let new_center = vec3.add(state.camera.center, state.camera.center, vec3.scale([], up, 0.1));
+                        let new_at = vec3.normalize([], vec3.subtract([], new_center, state.camera.position));
+                        vec3.normalize(state.camera.up, vec3.cross([], right, new_at));
                     } else {
-                        let at = vec3.scale([], vec3.normalize([], vec3.subtract([], camera.position, camera.center)), -0.1);
-                        vec3.add(camera.center, camera.center, at);
-                        vec3.add(camera.position, camera.position, at);
+                        let at = vec3.scale([], vec3.normalize([], vec3.subtract([], state.camera.position, state.camera.center)), -0.1);
+                        vec3.add(state.camera.center, state.camera.center, at);
+                        vec3.add(state.camera.position, state.camera.position, at);
                     }
                     break;
                 case "arrowdown":
@@ -324,18 +323,30 @@ class Game {
                         let new_at = vec3.normalize([], vec3.subtract([], new_center, state.camera.position));
                         vec3.normalize(state.camera.up, vec3.cross([], right, new_at));
                     } else {
-                        let at = vec3.scale([], vec3.normalize([], vec3.subtract([], camera.position, camera.center)), 0.1);
-                        vec3.add(camera.center, camera.center, at);
-                        vec3.add(camera.position, camera.position, at);
+                        let at = vec3.scale([], vec3.normalize([], vec3.subtract([], state.camera.position, state.camera.center)), 0.1);
+                        vec3.add(state.camera.center, state.camera.center, at);
+                        vec3.add(state.camera.position, state.camera.position, at);
                     }
                     break;
                 case " ":
-                    vec3.add(camera.center, camera.center, vec3.fromValues(0.0, 0.1, 0.0));
-                    vec3.add(camera.position, camera.position, vec3.fromValues(0.0, 0.1, 0.0));
+                    vec3.add(state.camera.center, state.camera.center, vec3.fromValues(0.0, 0.1, 0.0));
+                    vec3.add(state.camera.position, state.camera.position, vec3.fromValues(0.0, 0.1, 0.0));
                     break;
                 case "shift":
-                    vec3.add(camera.center, camera.center, vec3.fromValues(0.0, -0.1, 0.0));
-                    vec3.add(camera.position, camera.position, vec3.fromValues(0.0, -0.1, 0.0));
+                    vec3.add(state.camera.center, state.camera.center, vec3.fromValues(0.0, -0.1, 0.0));
+                    vec3.add(state.camera.position, state.camera.position, vec3.fromValues(0.0, -0.1, 0.0));
+                    break;
+                case "1":
+                    state.camera = state.cameras[0];
+                    break;
+                case "2":
+                    state.camera = state.cameras[1];
+                    break;
+                case "3":
+                    state.camera = state.cameras[2];
+                    break;
+                case "4":
+                    state.camera = state.cameras[3];
                     break;
                 case "i": //up
                     // if (this.collideCube.collider.flag == false) {

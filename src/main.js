@@ -211,7 +211,6 @@ async function main() {
     };
 
     state.numLights = state.pointLights.length;
-    state.camera.center = vec3.add([], state.camera.position, state.camera.front);
 
     const now = new Date();
     for (let i = 0; i < state.loadObjects.length; i++) {

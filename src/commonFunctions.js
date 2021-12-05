@@ -446,7 +446,11 @@ function parseSceneFile(file, state) {
                 state.loadObjects = jData[0].objects;
                 state.pointLights = jData[0].pointLights;
                 state.settings = jData[0].settings;
-                state.camera = state.settings.camera;
+                state.cameras = state.settings.cameras;
+                for (var camera of state.cameras){
+                    camera.center = vec3.add([], camera.position, camera.front);
+                }
+                state.camera = state.settings.cameras[0];
                 state.numberOfObjectsToLoad = jData[0].objects.length;
                 resolve();
             })
