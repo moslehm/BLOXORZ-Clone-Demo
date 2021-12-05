@@ -122,6 +122,7 @@ async function main() {
         uniform vec3 ambientVal;
         uniform vec3 specularVal;
         uniform float nVal;
+        uniform float alphaVal;
 
         out vec4 fragColor;
 
@@ -184,9 +185,9 @@ async function main() {
             // vec3 total = calculateColour(pointLights[0], normal);
             if (samplerExists == 1){
                 vec3 textureColour = texture(uTexture, oUV).rgb;
-                fragColor = vec4(total * textureColour, 1.0);
+                fragColor = vec4(total * textureColour, alphaVal);
             } else {
-                fragColor = vec4(total, 1.0);
+                fragColor = vec4(total, alphaVal);
             }
         }
         `;
@@ -210,7 +211,6 @@ async function main() {
     };
 
     state.numLights = state.pointLights.length;
-    state.camera.center = vec3.add([], state.camera.position, state.camera.front);
 
     const now = new Date();
     for (let i = 0; i < state.loadObjects.length; i++) {
@@ -292,6 +292,12 @@ function drawScene(gl, deltaTime, state) {
     gl.depthFunc(gl.LEQUAL); // Near things obscure far things
     gl.disable(gl.CULL_FACE); // Cull the backface of our objects to be more efficient
     gl.cullFace(gl.BACK);
+
+    gl.depthMask(false);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+
     // gl.frontFace(gl.CCW);
     gl.clearDepth(1.0); // Clear everything
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -312,6 +318,25 @@ function drawScene(gl, deltaTime, state) {
     sorted.map((object) => {
         gl.useProgram(object.programInfo.program);
         {
+            if (object.material.alpha < 1.0) {
+                // turn off depth masking
+                // enable blending and specify blending function
+                // clear depth for correct transparency rendering
+                gl.depthMask(false);
+                gl.enable(gl.BLEND);
+                gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+            }
+            else {
+                // disable blending
+                // enable depth masking and z-buffering
+                // specify depth function
+                // clear depth with 1.0
+                gl.disable(gl.BLEND);
+                gl.depthMask(true);
+                gl.enable(gl.DEPTH_TEST);
+                gl.depthFunc(gl.LEQUAL);
+            }
+
             // Projection Matrix ....
             let projectionMatrix = mat4.create();
             let fovy = 90.0 * Math.PI / 180.0; // Vertical field of view in radians
@@ -372,6 +397,7 @@ function drawScene(gl, deltaTime, state) {
             gl.uniform3fv(object.programInfo.uniformLocations.ambientVal, object.material.ambient);
             gl.uniform3fv(object.programInfo.uniformLocations.specularVal, object.material.specular);
             gl.uniform1f(object.programInfo.uniformLocations.nVal, object.material.n);
+            gl.uniform1f(object.programInfo.uniformLocations.alphaVal, object.material.alpha);
 
             // let mainLight = state.pointLights[0];
             // gl.uniform3fv(gl.getUniformLocation(object.programInfo.program, 'mainLight.position'), mainLight.position);
