@@ -3,8 +3,8 @@ class Game {
         this.state = state;
         this.spawnedObjects = [];
         this.collidableObjects = [];
-        this.direction = 0.02;  // for the npc cube translation   
-        this.wallUp = 0.01; // wall for button interaction 
+        this.direction = 0.02;  // for the npc cube translation
+        this.wallUp = 0.01; // wall for button interaction
         this.counter = 0;  // a work around for now for button interation
     }
 
@@ -13,15 +13,15 @@ class Game {
         console.log("Custom method!");
     }
 
-    // AUTO MOVE THE CUBE -- translates back and forth -- collision object 
+    // AUTO MOVE THE CUBE -- translates back and forth -- collision object
     directionCube(object) {
 
-        // if hit 1, switch directions 
+        // if hit 1, switch directions
         if (this.collideCube.model.position[2] > 2) {
             this.direction = -0.02;
         }
 
-        // if starting position 
+        // if starting position
         if (this.collideCube.model.position[2] == 0) {
             this.direction = 0.02;
         }
@@ -38,8 +38,8 @@ class Game {
             () => {
                 //this.wall.translate(vec3.fromValues(0, 0.02, 0));
                 this.wall.translate(vec3.fromValues(0, 0.2, 0));
-                this.button.collider.flag = false; 
-                //this.counter = 0; 
+                this.button.collider.flag = false;
+                //this.counter = 0;
                 //this.wall.translate(vec3.fromValues(0, 0.02, 0));
             },
             2 * 1000
@@ -50,8 +50,8 @@ class Game {
     disableButton(){
         setInterval(
             () => {
-                this.button.collider.flag = false; 
-                //console.log("hello"); 
+                this.button.collider.flag = false;
+                //console.log("hello");
             },
             5 * 1000
         );
@@ -59,31 +59,31 @@ class Game {
     }
 
 
-    // // toggle wall when button is pressed 
+    // // toggle wall when button is pressed
     // toggleWall(){
 
-    //     this.wallUp *= -1; 
+    //     this.wallUp *= -1;
 
     //     if (this.wallUp < 0){
-    //         console.log("wall was up toggle down "); 
-    //         this.wallUp= -0.01; 
-    //         return this.wallUp;  
+    //         console.log("wall was up toggle down ");
+    //         this.wallUp= -0.01;
+    //         return this.wallUp;
     //     }
 
     //     else{
     //         console.log("wall down toggle up ")
-    //         this.wallUp = 0.01; 
-    //         return this.wallUp;  
+    //         this.wallUp = 0.01;
+    //         return this.wallUp;
     //     }
 
     //     // if (!this.wallUp) {
-    //     //     console.log("wall was down put back up "); 
-    //     //     this.wallUp = true; 
+    //     //     console.log("wall was down put back up ");
+    //     //     this.wallUp = true;
 
-    //     //     //wall was down, move it back up 
-    //     //     this.wall.translate(vec3.fromValues(0, 1, 0));  
+    //     //     //wall was down, move it back up
+    //     //     this.wall.translate(vec3.fromValues(0, 1, 0));
 
-    //     //     return true; 
+    //     //     return true;
 
     //     // }
     // }
@@ -127,7 +127,7 @@ class Game {
             // console.log("rad", object.collider.radius);
 
             if (distance < (object.collider.radius + otherObject.collider.radius)) {
-                console.log("objects collide", A, B, object.name, otherObject.name); 
+                console.log("objects collide", A, B, object.name, otherObject.name);
                 object.onCollide;
                 // console.log("collide", object.collider.flag);
                 // return object.onCollide;
@@ -162,13 +162,13 @@ class Game {
 
         // OUR BLOCK
         const player = getObject(this.state, "playerBlock");
-        const collideCube = getObject(this.state, "collideCube"); // OUR NPC CUBE 
+        const collideCube = getObject(this.state, "collideCube"); // OUR NPC CUBE
         const button = getObject(this.state, "button1"); // BUTTON
-        //const wall = getObject(this.state, "wall1"); 
+        //const wall = getObject(this.state, "wall1");
         // const player = getObject(this.state, "tempCube");
         //let camera = this.state.camera;
 
-        // collision detection radius 
+        // collision detection radius
         this.createSphereCollider(player, 0.25);
         this.createSphereCollider(collideCube, 0.2);
         this.createSphereCollider(button, 0.01);
@@ -294,7 +294,7 @@ class Game {
                     }
                     break;
                 case "arrowup":
-                    if (event.getModifierState("Shift")) {
+                    if (event.getModifierState("Control")) {
                         // Rotate camera about X axis (pitch)
                         // Get look-at vector by subtracting position from center and normalizing
                         let at = vec3.normalize([], vec3.subtract([], camera.center, camera.position));
@@ -305,16 +305,14 @@ class Game {
                         let new_center = vec3.add(camera.center, camera.center, vec3.scale([], up, 0.1));
                         let new_at = vec3.normalize([], vec3.subtract([], new_center, camera.position));
                         vec3.normalize(camera.up, vec3.cross([], right, new_at));
-                    } else if (event.getModifierState("Control")) {
-                        vec3.add(camera.center, camera.center, vec3.fromValues(0.0, 0.1, 0.0));
-                        vec3.add(camera.position, camera.position, vec3.fromValues(0.0, 0.1, 0.0));
                     } else {
                         let at = vec3.scale([], vec3.normalize([], vec3.subtract([], camera.position, camera.center)), -0.1);
+                        vec3.add(camera.center, camera.center, at);
                         vec3.add(camera.position, camera.position, at);
                     }
                     break;
                 case "arrowdown":
-                    if (event.getModifierState("Shift")) {
+                    if (event.getModifierState("Control")) {
                         // Rotate camera about X axis (pitch)
                         // Get look-at vector by subtracting position from center and normalizing
                         at = vec3.normalize([], vec3.subtract([], state.camera.center, state.camera.position));
@@ -325,51 +323,56 @@ class Game {
                         let new_center = vec3.subtract(state.camera.center, state.camera.center, vec3.scale([], up, 0.1));
                         let new_at = vec3.normalize([], vec3.subtract([], new_center, state.camera.position));
                         vec3.normalize(state.camera.up, vec3.cross([], right, new_at));
-                    } else if (event.getModifierState("Control")) {
-                        vec3.add(camera.center, camera.center, vec3.fromValues(0.0, -0.1, 0.0));
-                        vec3.add(camera.position, camera.position, vec3.fromValues(0.0, -0.1, 0.0));
                     } else {
                         let at = vec3.scale([], vec3.normalize([], vec3.subtract([], camera.position, camera.center)), 0.1);
+                        vec3.add(camera.center, camera.center, at);
                         vec3.add(camera.position, camera.position, at);
                     }
                     break;
-                    
-                case "i": //up 
+                case " ":
+                    vec3.add(camera.center, camera.center, vec3.fromValues(0.0, 0.1, 0.0));
+                    vec3.add(camera.position, camera.position, vec3.fromValues(0.0, 0.1, 0.0));
+                    break;
+                case "shift":
+                    vec3.add(camera.center, camera.center, vec3.fromValues(0.0, -0.1, 0.0));
+                    vec3.add(camera.position, camera.position, vec3.fromValues(0.0, -0.1, 0.0));
+                    break;
+                case "i": //up
                     // if (this.collideCube.collider.flag == false) {
                     this.collideCube.translate(vec3.fromValues(0, 0, 0.5));
                     // }
                     break;
 
-                case "j": //left 
+                case "j": //left
                     //if (this.collideCube.collider.flag == false) {
                     this.collideCube.translate(vec3.fromValues(0.5, 0, 0));
                     //}
 
                     break;
 
-                case "k": //down 
+                case "k": //down
                     this.collideCube.translate(vec3.fromValues(0, 0, -0.5));
                     break;
 
-                case "l": //right 
+                case "l": //right
                     this.collideCube.translate(vec3.fromValues(-0.5, 0, 0));
                     break;
 
-                // case "t": // set the button colliding to true 
-                //     //this.wallUp = false; 
+                // case "t": // set the button colliding to true
+                //     //this.wallUp = false;
 
-                //     button.collider.flag = true; 
-                //     //console.log("t", button.collider.flag); 
-                //     wall.translate(vec3.fromValues(0, 1, 0)); 
-                //     this.toggleWall(wall) 
-                //     break; 
+                //     button.collider.flag = true;
+                //     //console.log("t", button.collider.flag);
+                //     wall.translate(vec3.fromValues(0, 1, 0));
+                //     this.toggleWall(wall)
+                //     break;
 
                 // case "y":
-                //     button.collider.flag = false; 
-                //     //console.log("y", button.collider.flag); 
+                //     button.collider.flag = false;
+                //     //console.log("y", button.collider.flag);
                 //     wall.translate(vec3.fromValues(0, -1, 0));
-                //     this.toggleWall(wall)  
-                //     break; 
+                //     this.toggleWall(wall)
+                //     break;
 
                 default:
                     break;
@@ -424,39 +427,39 @@ class Game {
         // example: Rotate a single object we defined in our start method
         // this.cube.rotate('x', deltaTime * 0.5);
 
-        
-        // Make our npc cube rotate 
+
+        // Make our npc cube rotate
         this.collideCube = getObject(this.state, "collideCube");
         this.collideCube.rotate('x', deltaTime * 1);
         this.collideCube.rotate('y', deltaTime * 1);
         this.collideCube.rotate('z', deltaTime * 1);
 
-        // Get the npc wall 
+        // Get the npc wall
         this.wall = getObject(this.state, "wall1");
         this.button = getObject(this.state, "button1");
-        this.player = getObject(this.state, "playerBlock"); 
+        this.player = getObject(this.state, "playerBlock");
 
-        // Make our npc cube translate automatically -- moves back and forth 
+        // Make our npc cube translate automatically -- moves back and forth
         this.collideCube.translate(vec3.fromValues(0, 0, this.directionCube(this.collideCube)));
 
         //call our collision check method on our BUTTON
-        // if the button is "pressed", collided w, toggle the wall  
-        this.checkCollision(this.button); //use key presses for now... 
+        // if the button is "pressed", collided w, toggle the wall
+        this.checkCollision(this.button); //use key presses for now...
 
         if (this.button.collider.flag == true) {
             console.log("button collision");
-            //this.disableButton(); 
-            //console.log("wall toggled"); 
+            //this.disableButton();
+            //console.log("wall toggled");
             if (this.counter < 1) {
                 //this.wall.translate(vec3.fromValues(0, -0.5, 0));
                 this.wall.translate(vec3.fromValues(0, -0.2, 0));
             }
-            //this.toggleWall();  // flips the sign 
-            //this.disableButton(); 
+            //this.toggleWall();  // flips the sign
+            //this.disableButton();
             //this.counter += 1;
-            this.disableButton(); 
-            this.setTimer();  //wall comes back up when timer hits 
-            //this.disableButton(); 
+            this.disableButton();
+            this.setTimer();  //wall comes back up when timer hits
+            //this.disableButton();
 
         }
 
@@ -465,18 +468,18 @@ class Game {
 
         if(this.player.collider.flag == true){
             console.log("player collision");
-            //this.disableButton(); 
-            //console.log("wall toggled"); 
+            //this.disableButton();
+            //console.log("wall toggled");
             if (this.counter < 1) {
                 //this.wall.translate(vec3.fromValues(0, -0.5, 0));
                 this.wall.translate(vec3.fromValues(0, -0.2, 0));
             }
-            //this.toggleWall();  // flips the sign 
-            //this.disableButton(); 
+            //this.toggleWall();  // flips the sign
+            //this.disableButton();
             //this.counter += 1;
-            this.disableButton(); 
-            this.setTimer();  //wall comes back up when timer hits 
-            //this.disableButton(); 
+            this.disableButton();
+            this.setTimer();  //wall comes back up when timer hits
+            //this.disableButton();
         }
 
 
