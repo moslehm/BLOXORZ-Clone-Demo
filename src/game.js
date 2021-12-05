@@ -42,7 +42,7 @@ class Game {
                 //this.counter = 0; 
                 //this.wall.translate(vec3.fromValues(0, 0.02, 0));
             },
-            5 * 1000
+            2 * 1000
         );
 
     }
@@ -127,6 +127,7 @@ class Game {
             // console.log("rad", object.collider.radius);
 
             if (distance < (object.collider.radius + otherObject.collider.radius)) {
+                console.log("objects collide", A, B, object.name, otherObject.name); 
                 object.onCollide;
                 // console.log("collide", object.collider.flag);
                 // return object.onCollide;
@@ -165,12 +166,12 @@ class Game {
         const button = getObject(this.state, "button1"); // BUTTON
         //const wall = getObject(this.state, "wall1"); 
         // const player = getObject(this.state, "tempCube");
-        let camera = this.state.camera;
+        //let camera = this.state.camera;
 
         // collision detection radius 
         this.createSphereCollider(player, 0.25);
         this.createSphereCollider(collideCube, 0.2);
-        this.createSphereCollider(button, 0.1);
+        this.createSphereCollider(button, 0.01);
         // 0 = standing, 1 = rolling along z, 2 = rolling along x
         player.rolling = 0;
         let camera = this.state.camera;
@@ -320,7 +321,7 @@ class Game {
                         vec3.add(camera.position, camera.position, at);
                     }
                     break;
-
+                    
                 case "i": //up 
                     // if (this.collideCube.collider.flag == false) {
                     this.collideCube.translate(vec3.fromValues(0, 0, 0.5));
@@ -411,6 +412,7 @@ class Game {
         // example: Rotate a single object we defined in our start method
         // this.cube.rotate('x', deltaTime * 0.5);
 
+        
         // Make our npc cube rotate 
         this.collideCube = getObject(this.state, "collideCube");
         this.collideCube.rotate('x', deltaTime * 1);
@@ -420,6 +422,7 @@ class Game {
         // Get the npc wall 
         this.wall = getObject(this.state, "wall1");
         this.button = getObject(this.state, "button1");
+        this.player = getObject(this.state, "playerBlock"); 
 
         // Make our npc cube translate automatically -- moves back and forth 
         this.collideCube.translate(vec3.fromValues(0, 0, this.directionCube(this.collideCube)));
@@ -446,7 +449,23 @@ class Game {
         }
 
 
+        this.checkCollision(this.player);
 
+        if(this.player.collider.flag == true){
+            console.log("player collision");
+            //this.disableButton(); 
+            //console.log("wall toggled"); 
+            if (this.counter < 1) {
+                //this.wall.translate(vec3.fromValues(0, -0.5, 0));
+                this.wall.translate(vec3.fromValues(0, -0.2, 0));
+            }
+            //this.toggleWall();  // flips the sign 
+            //this.disableButton(); 
+            //this.counter += 1;
+            this.disableButton(); 
+            this.setTimer();  //wall comes back up when timer hits 
+            //this.disableButton(); 
+        }
 
 
         // example: Rotate all objects in the scene marked with a flag
