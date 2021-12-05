@@ -22,11 +22,11 @@ class Game {
         }
 
         // if starting position 
-        if (this.collideCube.model.position[2] == 0) {
+        if (this.collideCube.model.position[2] == -0.5) {
             this.direction = 0.02;
         }
 
-        if (this.collideCube.model.position[2] < 0) {
+        if (this.collideCube.model.position[2] < -0.5) {
             this.direction = 0.02;
         }
 
@@ -45,7 +45,7 @@ class Game {
                 this.button.collider.flag = false;
                 this.counter = 0;
             },
-            5 * 990 // amt time for wall to go back up 
+            3 * 990 // amt time for wall to go back up 
         );
     }
 
@@ -56,7 +56,7 @@ class Game {
                 this.button.collider.flag = false;
                 //console.log("hello"); 
             },
-            5 * 1000 //seconds change this later 
+            3 * 1000 //seconds change this later 
         );
 
     }
@@ -131,6 +131,7 @@ class Game {
 
             // when the button is being pushed....  //  but player is object B 
             if(object.name == "button1"){ 
+                
                 var A = vec3.fromValues(object.model.position[0], object.model.position[1], object.model.position[2]);
                 vec3.transformMat4(A, A, object.modelMatrix);
 
@@ -140,6 +141,18 @@ class Game {
                 var distance = vec3.distance(A, B);
 
             }
+
+
+            else if(object.name == "collideCube"){
+                var A = vec3.fromValues(object.model.position[0], object.model.position[1], object.model.position[2]);
+                vec3.transformMat4(A, A, object.modelMatrix);
+
+                var B = vec3.fromValues(otherObject.model.position[0]+0.50, otherObject.model.position[1], otherObject.model.position[2]);
+                vec3.transformMat4(B, B, otherObject.modelMatrix);
+
+                var distance = vec3.distance(A, B);
+            }
+            
 
 
             else {
@@ -201,7 +214,7 @@ class Game {
 
         // collision detection radius 
         //this.createSphereCollider(player, 0.25);
-        this.createSphereCollider(collideCube, 0.2);
+        this.createSphereCollider(collideCube, 0.50);
         this.createSphereCollider(button, 0.01);
 
         //half block for collision detect
@@ -430,16 +443,21 @@ class Game {
         //call our collision check method on our BUTTON
         // if the button is "pressed", collided w, toggle the wall  
         this.checkCollision(this.button); //use key presses for now... 
-
         if (this.button.collider.flag == true) {
-            console.log("button collision");
+            //console.log("button collision");
             if (this.counter < 1) {
                 this.wallDown();
                 this.disableButton();
                 this.setTimer()
             }
-
             this.counter += 1;
+        }
+
+
+        // collision w the NPC CUBE 
+        this.checkCollision(this.collideCube); 
+        if (this.collideCube.collider.flag == true){
+            console.log("collided... YOU DIED"); 
         }
 
         // this.checkCollision(this.player);

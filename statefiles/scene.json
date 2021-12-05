@@ -25,14 +25,14 @@
                 },
                 "type": "cubeCustom",
                 "position": [
-                    -4.5,
+                    -4.25,
                     0,
-                    0
+                    -0.5
                 ],
                 "scale": [
-                    1,
-                    1,
-                    1
+                    1.25,
+                    1.25,
+                    1.25
                 ],
                 "diffuseTexture": "default.jpg",
                 "normalTexture": "defaultNorm.jpg",
@@ -318,7 +318,7 @@
                 },
                 "type": "cubeCustom",
                 "position": [
-                    0,
+                    -0.04,
                     0,
                     0
                 ],
