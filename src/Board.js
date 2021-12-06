@@ -52,6 +52,7 @@ class Board {
                     this.pos2 = [undefined, undefined];
                     if (board[this.pos1[0]][this.pos1[1]] === 2) {
                         this.state = 2;
+                        console.log("YOU WIN"); 
                     }
                 } else {
                     this.state = 1;
@@ -71,6 +72,7 @@ class Board {
                     this.pos2 = [undefined, undefined];
                     if (board[this.pos1[0]][this.pos1[1]] === 2) {
                         this.state = 2;
+                        console.log("YOU WIN"); 
                     }
                 } else {
                     this.state = 1;
@@ -90,6 +92,7 @@ class Board {
                     this.pos2 = [undefined, undefined];
                     if (board[this.pos1[0]][this.pos1[1]] === 2) {
                         this.state = 2;
+                        console.log("YOU WIN"); 
                     }
                 } else {
                     this.state = 1;
@@ -109,6 +112,7 @@ class Board {
                     this.pos2 = [undefined, undefined];
                     if (board[this.pos1[0]][this.pos1[1]] === 2) {
                         this.state = 2;
+                        console.log("YOU WIN"); 
                     }
                 } else {
                     this.state = 1;
