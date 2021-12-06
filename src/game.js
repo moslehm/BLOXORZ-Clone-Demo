@@ -7,8 +7,9 @@ class Game {
         this.wallUp = 0.01; // wall for button interaction
         this.timeSinceEnd = 0;
         this.resultsDisplayed = false;
-        this.counter = 0;  // a work around for now for button interation
         this.gameEnded = false;
+        this.numberOfMoves = 0;
+        this.bestAttempt = 99999;
     }
 
     reset() {
@@ -18,15 +19,17 @@ class Game {
         this.board.reset(this.player.model.position[2], this.player.model.position[0]);
         this.player.rolling = 0;
         this.bridgeTile1.material.alpha = 0.1;  // update transparencies of the bridge
-        this.bridgeTile2.material.alpha = 0.1; 
-        this.collideCube.material.alpha = 0.5; 
+        this.bridgeTile2.material.alpha = 0.1;
+        this.collideCube.material.alpha = 0.5;
 
         this.gameEnded = false;
         this.resultsDisplayed = false;
         this.timeSinceEnd = 0;
-        document.getElementById('gameOverPage').style.visibility='hidden'; 
-        document.getElementById('youWonPage').style.visibility='hidden'; 
-        this.buttonCount = 0; 
+        document.getElementById('gameOverPage').style.visibility='hidden';
+        document.getElementById('youWonPage').style.visibility='hidden';
+        this.buttonCount = 0;
+        this.numberOfMoves = 0;
+        document.getElementById("movesText").innerHTML = "Moves: 0</b>";
     }
 
     // AUTO MOVE THE CUBE -- translates back and forth -- collision object
@@ -51,7 +54,7 @@ class Game {
 
     // play the audio
     playAudio(audio){
-        audio.play(); 
+        audio.play();
     }
 
     /*
@@ -88,9 +91,9 @@ class Game {
         setTimeout(
             () => {
                 //this.wall.translate(vec3.fromValues(0, 0.02, 0));
-                document.getElementById(id).style.visibility='visible'; 
+                document.getElementById(id).style.visibility='visible';
             },
-            2 * 900 // show it 2 seconds after 
+            2 * 900 // show it 2 seconds after
         );
     }
 
@@ -179,11 +182,11 @@ class Game {
 
         // AUDIO LINKS https://simpleguics2pygame.readthedocs.io/en/latest/_static/links/snd_links.html
 
-        this.crashAudio = new Audio('http://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/explosion_02.wav'); 
-        this.winAudio = new Audio('http://commondatastorage.googleapis.com/codeskulptor-assets/week7-brrring.m4a'); 
-        this.loseAudio = new Audio('http://www.utc.fr/si28/ProjetsUpload/P2006_si28p004/flash_puzzle/sons/rush/fall-odd.wav'); 
-        this.buttonAudio = new Audio('http://www.cs.tlu.ee/~rinde/media/soundid/klipid/nupp_alla_01_01.mp3'); 
-        this.buttonCount = 0; 
+        this.crashAudio = new Audio('http://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/explosion_02.wav');
+        this.winAudio = new Audio('http://commondatastorage.googleapis.com/codeskulptor-assets/week7-brrring.m4a');
+        this.loseAudio = new Audio('http://www.utc.fr/si28/ProjetsUpload/P2006_si28p004/flash_puzzle/sons/rush/fall-odd.wav');
+        this.buttonAudio = new Audio('http://www.cs.tlu.ee/~rinde/media/soundid/klipid/nupp_alla_01_01.mp3');
+        this.buttonCount = 0;
 
         // this just prevents the context menu from popping up when you right click
         document.addEventListener("contextmenu", (e) => {
@@ -265,6 +268,7 @@ class Game {
                             player.translate(vec3.fromValues(0.5, 0.0, 0.0));
                         }
                         this.board.movePlayer("left");
+                        this.numberOfMoves += 1;
                         break;
                     case "d":
                         if (!player.rolling) {
@@ -281,6 +285,7 @@ class Game {
                             player.translate(vec3.fromValues(-0.5, 0.0, 0.0));
                         }
                         this.board.movePlayer("right");
+                        this.numberOfMoves += 1;
                         break;
                     case "w":
                         if (!player.rolling) {
@@ -297,6 +302,7 @@ class Game {
                             player.translate(vec3.fromValues(0.0, 0.0, 0.5));
                         }
                         this.board.movePlayer("up");
+                        this.numberOfMoves += 1;
                         break;
                     case "s":
                         if (!player.rolling) {
@@ -313,6 +319,7 @@ class Game {
                             player.translate(vec3.fromValues(0.0, 0.0, -0.5));
                         }
                         this.board.movePlayer("down");
+                        this.numberOfMoves += 1;
                         break;
                     case "arrowright":
                         // Get look-at vector by subtracting position from center and normalizing
@@ -342,7 +349,6 @@ class Game {
                         } else {
                             vec3.add(state.camera.position, state.camera.position, vec3.scale([], right, -0.1));
                             vec3.add(state.camera.center, state.camera.center, vec3.scale([], right, -0.1));
-
                         }
                         break;
                     case "arrowup":
@@ -408,7 +414,9 @@ class Game {
             }
             if (e.key === '='){
                 this.reset();
-            }});
+            }
+            document.getElementById("movesText").innerHTML = `Moves: ` + this.numberOfMoves + "</b>";
+        });
         // this.customMethod(); // calling our custom method! (we could put spawning logic, collision logic etc in there ;) )
 
         // example: spawn some stuff before the scene starts
@@ -486,17 +494,17 @@ class Game {
             // this.counter += 1;
             if(this.buttonCount == 0){
                 this.buttonAudio.play();
-                this.buttonCount = 1; 
+                this.buttonCount = 1;
             }
 
-            console.log("button", this.buttonCount); 
+            console.log("button", this.buttonCount);
 
-            //set transparency of the bridge 
+            //set transparency of the bridge
             this.bridgeTile1.material.alpha = 1;
             this.bridgeTile2.material.alpha = 1;
 
-            // update the board. 
-            this.board.boardUpdate(); 
+            // update the board.
+            this.board.boardUpdate();
 
         }
 
@@ -504,8 +512,8 @@ class Game {
         // collision w the NPC CUBE
         this.checkCollision(this.collideCube);
         if (this.collideCube.collider.flag == true) {
-            this.playAudio(this.crashAudio); 
-            this.collideCube.material.alpha = 1; 
+            this.playAudio(this.crashAudio);
+            this.collideCube.material.alpha = 1;
             this.board.state = 1;
         }
 
@@ -516,22 +524,26 @@ class Game {
         if (this.gameEnded && !this.resultsDisplayed) {
             if (this.board.state === 1){
                 console.log("YOU DIED");
-                this.playAudio(this.loseAudio); 
-                this.gameOverTimer("gameOverPage"); 
+                this.playAudio(this.loseAudio);
+                this.gameOverTimer("gameOverPage");
             } else {
                 console.log("YOU WON");
-                this.playAudio(this.winAudio); 
+                this.playAudio(this.winAudio);
                 this.player.translate(vec3.fromValues(0, -0.1, 0));
-                this.gameOverTimer("youWonPage"); 
+                this.gameOverTimer("youWonPage");
+                if (this.bestAttempt > this.numberOfMoves) {
+                    this.bestAttempt = this.numberOfMoves;
+                    document.getElementById("bestAttemptText").innerHTML = "Best Attempt: " + this.bestAttempt + "</b>";
+                }
             }
             this.resultsDisplayed = true;
         }
 
         // if(this.timeSinceEnd < 3 && this.gameEnded == true && this.collideCube.collider.flag == false){
-        //     this.playAudio(this.loseAudio); 
+        //     this.playAudio(this.loseAudio);
         //     this.player.translate(vec3.fromValues(0, -0.1, 0));
         // }
-        
+
 
         if(this.timeSinceEnd < 5.5 && this.gameEnded == true){
             this.player.translate(vec3.fromValues(0, -0.1, 0));
