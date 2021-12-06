@@ -5,8 +5,10 @@ class Game {
         this.collidableObjects = [];
         this.direction = 0.02;  // for the npc cube translation
         this.wallUp = 0.01; // wall for button interaction
-        this.timeSinceLoss = 0;
+        this.timeSinceEnd = 0;
+        this.resultsDisplayed = false;
         this.counter = 0;  // a work around for now for button interation
+        this.gameEnded = false;
     }
 
     reset() {
@@ -15,8 +17,9 @@ class Game {
         this.player.model.rotation = [...this.player.original.rotation];
         this.board.reset(this.player.model.position[2], this.player.model.position[0]);
         this.player.rolling = 0;
-        this.allowInput = 1;
-        this.timeSinceLoss = 0;
+        this.gameEnded = false;
+        this.resultsDisplayed = false;
+        this.timeSinceEnd = 0;
     }
 
     // AUTO MOVE THE CUBE -- translates back and forth -- collision object
@@ -187,7 +190,6 @@ class Game {
         // });
         // this.createSphereCollider(otherCube, 0.5);
 
-        this.allowInput = true;
         // OUR BLOCK
         this.player = getObject(this.state, "playerBlock");
         this.collideCube = getObject(this.state, "collideCube"); // OUR NPC CUBE
@@ -225,7 +227,7 @@ class Game {
         document.addEventListener("keydown", (e) => {
             e.preventDefault();
             console.log(e.key.toLowerCase());
-            if (this.allowInput){
+            if (!this.gameEnded){
                 let axis;
                 let at;
                 let up;
@@ -476,21 +478,28 @@ class Game {
         if (this.collideCube.collider.flag == true) {
             this.board.state = 1;
         }
-        if (this.board.state == 1) {
-            console.log("YOU DIED");
-            this.allowInput = false;
-            this.timeSinceLoss += deltaTime;
-            if (this.timeSinceLoss >= 3) {
-                this.reset();
+
+        if (this.board.state >= 1) {
+            this.gameEnded = true;
+            this.timeSinceEnd += deltaTime;
+        }
+        if (this.gameEnded && !this.resultsDisplayed) {
+            if (this.board.state === 1){
+                console.log("YOU DIED");
+            } else {
+                console.log("YOU WON");
             }
+            this.resultsDisplayed = true;
+        }
+        if (this.timeSinceEnd >= 3) {
+            this.reset();
+        }
             //restart the scene?
             //this.onStart();
             //var resetPos = vec3.fromValues(-0.5, 0.015, -1);
 
             // this.player.model.position = resetPos;
             // this.player.model.rotation = [0.9999999999999999,  0,   0, 0,  0, 1,  0, 0, 0, 0, 0.9999999999999999, 0, 0,0,0, 1]
-
-        }
         // this.checkCollision(this.player);
 
         // if (this.player.collider.flag == true) {
@@ -533,7 +542,5 @@ class Game {
 
         // example - call our collision check method on our cube
         // this.checkCollision(this.cube);
-
-
     }
 }
