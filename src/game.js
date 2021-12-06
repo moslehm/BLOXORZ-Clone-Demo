@@ -19,9 +19,14 @@ class Game {
         this.player.rolling = 0;
         this.bridgeTile1.material.alpha = 0.1;  // update transparencies of the bridge
         this.bridgeTile2.material.alpha = 0.1; 
+        this.collideCube.material.alpha = 0.5; 
+
         this.gameEnded = false;
         this.resultsDisplayed = false;
         this.timeSinceEnd = 0;
+        document.getElementById('gameOverPage').style.visibility='hidden'; 
+        document.getElementById('youWonPage').style.visibility='hidden'; 
+        this.buttonCount = 0; 
     }
 
     // AUTO MOVE THE CUBE -- translates back and forth -- collision object
@@ -42,6 +47,11 @@ class Game {
         }
 
         return (this.direction);
+    }
+
+    // play the audio
+    playAudio(audio){
+        audio.play(); 
     }
 
     /*
@@ -74,40 +84,30 @@ class Game {
 
     }*/
 
+    gameOverTimer(id) { // countdown timer --> applies these once timer hits
+        setTimeout(
+            () => {
+                //this.wall.translate(vec3.fromValues(0, 0.02, 0));
+                document.getElementById(id).style.visibility='visible'; 
+            },
+            2 * 900 // show it 2 seconds after 
+        );
+    }
 
-    // // toggle wall when button is pressed
-    // toggleWall(){
 
-    //     this.wallUp *= -1;
 
-    //     if (this.wallUp < 0){
-    //         console.log("wall was up toggle down ");
-    //         this.wallUp= -0.01;
-    //         return this.wallUp;
-    //     }
-
-    //     else{
-    //         console.log("wall down toggle up ")
-    //         this.wallUp = 0.01;
-    //         return this.wallUp;
-    //     }
-
-    //     // if (!this.wallUp) {
-    //     //     console.log("wall was down put back up ");
-    //     //     this.wallUp = true;
-
-    //     //     //wall was down, move it back up
-    //     //     this.wall.translate(vec3.fromValues(0, 1, 0));
-
-    //     //     return true;
-
-    //     // }
+    // fallDown(){
+    //     this.playerFall.rotate('x', deltaTime * 1);
+    //     this.playerFall.rotate('y', deltaTime * 1);
+    //     this.playerFall.rotate('z', deltaTime * 1);
+    //     this.playerFall.translate(vec3.fromValues(0, -0.2, 0));
     // }
+
 
     // example - create a collider on our object with various fields we might need (you will likely need to add/remove/edit how this works)
     createSphereCollider(object, radius, onCollide = null) {
         object.collider = {
-            type: "SPHERE",
+            type: "CUBE",
             radius: radius,
             onCollide: onCollide ? onCollide : (otherObject) => {
                 console.log(`Collided with ${otherObject.name}`);
@@ -177,6 +177,14 @@ class Game {
     async onStart() {
         console.log("On start");
 
+        // AUDIO LINKS https://simpleguics2pygame.readthedocs.io/en/latest/_static/links/snd_links.html
+
+        this.crashAudio = new Audio('http://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/explosion_02.wav'); 
+        this.winAudio = new Audio('http://commondatastorage.googleapis.com/codeskulptor-assets/week7-brrring.m4a'); 
+        this.loseAudio = new Audio('http://www.utc.fr/si28/ProjetsUpload/P2006_si28p004/flash_puzzle/sons/rush/fall-odd.wav'); 
+        this.buttonAudio = new Audio('http://www.cs.tlu.ee/~rinde/media/soundid/klipid/nupp_alla_01_01.mp3'); 
+        this.buttonCount = 0; 
+
         // this just prevents the context menu from popping up when you right click
         document.addEventListener("contextmenu", (e) => {
             e.preventDefault();
@@ -198,6 +206,8 @@ class Game {
         this.button = getObject(this.state, "button1"); // BUTTON
         this.bridgeTile1 = getObject(this.state, "tile19"); // BRIDGE TILE
         this.bridgeTile2 = getObject(this.state, "tile17");  // BRIDGE TILE
+
+
         // Get the npc wall
         // this.wall = getObject(this.state, "wall1");
         //const wall = getObject(this.state, "wall1");
@@ -211,7 +221,7 @@ class Game {
 
         // collision detection radius
         //this.createSphereCollider(player, 0.25);
-        this.createSphereCollider(this.collideCube, 0.50);
+        this.createSphereCollider(this.collideCube, 0.40);
         this.createSphereCollider(this.button, 0.01);
 
         //half block for collision detect
@@ -447,8 +457,6 @@ class Game {
         // example: Rotate a single object we defined in our start method
         // this.cube.rotate('x', deltaTime * 0.5);
 
-
-
         // Make our npc cube rotate
         // this.collideCube = getObject(this.state, "collideCube");
         this.collideCube.rotate('x', deltaTime * 1);
@@ -476,6 +484,12 @@ class Game {
             //     this.setTimer()
             // }
             // this.counter += 1;
+            if(this.buttonCount == 0){
+                this.buttonAudio.play();
+                this.buttonCount = 1; 
+            }
+
+            console.log("button", this.buttonCount); 
 
             //set transparency of the bridge 
             this.bridgeTile1.material.alpha = 1;
@@ -490,6 +504,8 @@ class Game {
         // collision w the NPC CUBE
         this.checkCollision(this.collideCube);
         if (this.collideCube.collider.flag == true) {
+            this.playAudio(this.crashAudio); 
+            this.collideCube.material.alpha = 1; 
             this.board.state = 1;
         }
 
@@ -500,41 +516,31 @@ class Game {
         if (this.gameEnded && !this.resultsDisplayed) {
             if (this.board.state === 1){
                 console.log("YOU DIED");
+                this.playAudio(this.loseAudio); 
+                this.gameOverTimer("gameOverPage"); 
             } else {
                 console.log("YOU WON");
+                this.playAudio(this.winAudio); 
+                this.player.translate(vec3.fromValues(0, -0.1, 0));
+                this.gameOverTimer("youWonPage"); 
             }
             this.resultsDisplayed = true;
         }
-        if (this.timeSinceEnd >= 3) {
+
+        // if(this.timeSinceEnd < 3 && this.gameEnded == true && this.collideCube.collider.flag == false){
+        //     this.playAudio(this.loseAudio); 
+        //     this.player.translate(vec3.fromValues(0, -0.1, 0));
+        // }
+        
+
+        if(this.timeSinceEnd < 5.5 && this.gameEnded == true){
+            this.player.translate(vec3.fromValues(0, -0.1, 0));
+        }
+
+        if (this.timeSinceEnd >= 5) {
             this.reset();
         }
-            //restart the scene?
-            //this.onStart();
-            //var resetPos = vec3.fromValues(-0.5, 0.015, -1);
 
-            // this.player.model.position = resetPos;
-            // this.player.model.rotation = [0.9999999999999999,  0,   0, 0,  0, 1,  0, 0, 0, 0, 0.9999999999999999, 0, 0,0,0, 1]
-        // this.checkCollision(this.player);
-
-        // if (this.player.collider.flag == true) {
-        //     //console.log("player collision");
-        //     //this.disableButton();
-        //     //console.log("wall toggled");
-        //     if (this.counter < 1) {
-        //         //this.wall.translate(vec3.fromValues(0, -0.5, 0));
-        //         //this.wall.translate(vec3.fromValues(0, -0.2, 0));
-        //         this.wallDown();
-
-        //         this.disableButton();
-        //         this.setTimer()
-        //     }
-        //     //this.toggleWall();  // flips the sign
-        //     //this.disableButton();
-        //     this.counter += 1;
-        //     // this.disableButton();
-        //     // this.setTimer();  //wall comes back up when timer hits
-        //     //this.disableButton();
-        // }
 
         // example: Rotate all objects in the scene marked with a flag
         // this.state.objects.forEach((object) => {
