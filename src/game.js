@@ -4,6 +4,7 @@ class Game {
         this.spawnedObjects = [];
         this.collidableObjects = [];
         this.direction = 0.02;  // for the npc cube translation
+        this.direction2 = 0.03;
         this.wallUp = 0.01; // wall for button interaction
         this.timeSinceEnd = 0;
         this.resultsDisplayed = false;
@@ -18,15 +19,17 @@ class Game {
         this.board.reset(this.player.model.position[2], this.player.model.position[0]);
         this.player.rolling = 0;
         this.bridgeTile1.material.alpha = 0.1;  // update transparencies of the bridge
-        this.bridgeTile2.material.alpha = 0.1; 
-        this.collideCube.material.alpha = 0.5; 
+        this.bridgeTile2.material.alpha = 0.1;
+        this.collideCube.material.alpha = 0.5;
 
         this.gameEnded = false;
         this.resultsDisplayed = false;
         this.timeSinceEnd = 0;
-        document.getElementById('gameOverPage').style.visibility='hidden'; 
-        document.getElementById('youWonPage').style.visibility='hidden'; 
-        this.buttonCount = 0; 
+        document.getElementById('gameOverPage').style.visibility = 'hidden';
+        document.getElementById('youWonPage').style.visibility = 'hidden';
+        this.buttonCount = 0;
+        this.sweeper.model.position = vec3.fromValues(-0.50, 0, 2);
+
     }
 
     // AUTO MOVE THE CUBE -- translates back and forth -- collision object
@@ -49,9 +52,30 @@ class Game {
         return (this.direction);
     }
 
+
+    directionSweeper() {
+
+        // if hit 1, switch directions
+        if (this.sweeper.model.position[2] > 2) {
+            this.direction2 = -0.03;
+        }
+
+        // if starting position
+        if (this.sweeper.model.position[2] == -3) {
+            //this.wall.translate(vec3.fromValues(0, 0.02, 0));
+            this.direction2 = 0.03;
+        }
+
+        if (this.sweeper.model.position[2] < -3) {
+            this.direction2 = 0.03;
+        }
+
+        return (this.direction2);
+    }
+
     // play the audio
-    playAudio(audio){
-        audio.play(); 
+    playAudio(audio) {
+        audio.play();
     }
 
     /*
@@ -88,7 +112,7 @@ class Game {
         setTimeout(
             () => {
                 //this.wall.translate(vec3.fromValues(0, 0.02, 0));
-                document.getElementById(id).style.visibility='visible'; 
+                document.getElementById(id).style.visibility = 'visible';
             },
             2 * 900 // show it 2 seconds after 
         );
@@ -152,6 +176,18 @@ class Game {
                 vec3.transformMat4(B, B, otherObject.modelMatrix);
 
                 var distance = vec3.distance(A, B);
+            }
+            else if (object.name == "sweep" && otherObject.name == "playerBlock") {
+                var A = vec3.fromValues(object.model.position[0], object.model.position[1], object.model.position[2]);
+                vec3.transformMat4(A, A, object.modelMatrix);
+
+                var B = vec3.fromValues(otherObject.model.position[0] + 0.50, otherObject.model.position[1], otherObject.model.position[2]);
+                vec3.transformMat4(B, B, otherObject.modelMatrix);
+
+                var distance = vec3.distance(A, B);
+
+                //console.log("sweep", distance);
+
             } else {
                 var A = vec3.fromValues(object.model.position[0], object.model.position[1], object.model.position[2]);
                 vec3.transformMat4(A, A, object.modelMatrix);
@@ -167,7 +203,11 @@ class Game {
                 // console.log("collide", object.collider.flag);
                 // return object.onCollide;
                 object.collider.flag = true; //WE COLLIDED
-                console.log("collide", object.collider.flag, object.name, otherObject.name);
+
+                if (object.name == 'sweep') {
+                    console.log("collide", object.collider.flag);
+                }
+                //console.log("collide", object.collider.flag, object.name, otherObject.name);
             }
         }
     }
@@ -179,11 +219,11 @@ class Game {
 
         // AUDIO LINKS https://simpleguics2pygame.readthedocs.io/en/latest/_static/links/snd_links.html
 
-        this.crashAudio = new Audio('http://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/explosion_02.wav'); 
-        this.winAudio = new Audio('http://commondatastorage.googleapis.com/codeskulptor-assets/week7-brrring.m4a'); 
-        this.loseAudio = new Audio('http://www.utc.fr/si28/ProjetsUpload/P2006_si28p004/flash_puzzle/sons/rush/fall-odd.wav'); 
-        this.buttonAudio = new Audio('http://www.cs.tlu.ee/~rinde/media/soundid/klipid/nupp_alla_01_01.mp3'); 
-        this.buttonCount = 0; 
+        this.crashAudio = new Audio('http://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/explosion_02.wav');
+        this.winAudio = new Audio('http://commondatastorage.googleapis.com/codeskulptor-assets/week7-brrring.m4a');
+        this.loseAudio = new Audio('http://www.utc.fr/si28/ProjetsUpload/P2006_si28p004/flash_puzzle/sons/rush/fall-odd.wav');
+        this.buttonAudio = new Audio('http://www.cs.tlu.ee/~rinde/media/soundid/klipid/nupp_alla_01_01.mp3');
+        this.buttonCount = 0;
 
         // this just prevents the context menu from popping up when you right click
         document.addEventListener("contextmenu", (e) => {
@@ -206,6 +246,7 @@ class Game {
         this.button = getObject(this.state, "button1"); // BUTTON
         this.bridgeTile1 = getObject(this.state, "tile19"); // BRIDGE TILE
         this.bridgeTile2 = getObject(this.state, "tile17");  // BRIDGE TILE
+        this.sweeper = getObject(this.state, "sweep");
 
 
         // Get the npc wall
@@ -223,6 +264,7 @@ class Game {
         //this.createSphereCollider(player, 0.25);
         this.createSphereCollider(this.collideCube, 0.40);
         this.createSphereCollider(this.button, 0.01);
+        this.createSphereCollider(this.sweeper, 0.50);
 
         //half block for collision detect
         this.createSphereCollider(this.playerHalf1, 0.25);
@@ -241,7 +283,7 @@ class Game {
         document.addEventListener("keydown", (e) => {
             e.preventDefault();
             console.log(e.key.toLowerCase());
-            if (!this.gameEnded){
+            if (!this.gameEnded) {
                 let axis;
                 let at;
                 let up;
@@ -406,9 +448,10 @@ class Game {
                         break;
                 }
             }
-            if (e.key === '='){
+            if (e.key === '=') {
                 this.reset();
-            }});
+            }
+        });
         // this.customMethod(); // calling our custom method! (we could put spawning logic, collision logic etc in there ;) )
 
         // example: spawn some stuff before the scene starts
@@ -463,15 +506,9 @@ class Game {
         this.collideCube.rotate('y', deltaTime * 1);
         this.collideCube.rotate('z', deltaTime * 1);
 
-        // tiles for our
-
-        // Get the npc wall
-        // this.wall = getObject(this.state, "wall1");
-        // this.button = getObject(this.state, "button1");
-        // this.player = getObject(this.state, "playerBlock");
-
-        // Make our npc cube translate automatically -- moves back and forth
+        // Make our npc cube + our sweeper translate automatically -- moves back and forth
         this.collideCube.translate(vec3.fromValues(0, 0, this.directionCube(this.collideCube)));
+        this.sweeper.translate(vec3.fromValues(0, 0, this.directionSweeper(this.sweeper)));
 
         //call our collision check method on our BUTTON
         // if the button is "pressed", collided w, toggle the wall
@@ -484,28 +521,36 @@ class Game {
             //     this.setTimer()
             // }
             // this.counter += 1;
-            if(this.buttonCount == 0){
+            if (this.buttonCount == 0) {
                 this.buttonAudio.play();
-                this.buttonCount = 1; 
+                this.buttonCount = 1;
             }
 
-            console.log("button", this.buttonCount); 
+            console.log("button", this.buttonCount);
 
             //set transparency of the bridge 
             this.bridgeTile1.material.alpha = 1;
             this.bridgeTile2.material.alpha = 1;
 
             // update the board. 
-            this.board.boardUpdate(); 
+            this.board.boardUpdate();
 
         }
+
+        // check sweeper collision 
+        this.checkCollision(this.sweeper);
 
 
         // collision w the NPC CUBE
         this.checkCollision(this.collideCube);
-        if (this.collideCube.collider.flag == true) {
-            this.playAudio(this.crashAudio); 
-            this.collideCube.material.alpha = 1; 
+        this.checkCollision(this.sweeper);
+        if (this.collideCube.collider.flag == true || this.sweeper.collider.flag == true) {
+            // IF WE COLLIDED WE DIE, play audio + switch the board state
+            this.playAudio(this.crashAudio);
+            if(this.collideCube.collider.flag == true ){ 
+                this.collideCube.material.alpha = 1; // IF IT WAS THE CUBE, SET TRANSPARENCY 
+            }
+
             this.board.state = 1;
         }
 
@@ -514,26 +559,20 @@ class Game {
             this.timeSinceEnd += deltaTime;
         }
         if (this.gameEnded && !this.resultsDisplayed) {
-            if (this.board.state === 1){
+            if (this.board.state === 1) {
                 console.log("YOU DIED");
-                this.playAudio(this.loseAudio); 
-                this.gameOverTimer("gameOverPage"); 
+                this.playAudio(this.loseAudio);
+                this.gameOverTimer("gameOverPage");
             } else {
                 console.log("YOU WON");
-                this.playAudio(this.winAudio); 
+                this.playAudio(this.winAudio);
                 this.player.translate(vec3.fromValues(0, -0.1, 0));
-                this.gameOverTimer("youWonPage"); 
+                this.gameOverTimer("youWonPage");
             }
             this.resultsDisplayed = true;
         }
 
-        // if(this.timeSinceEnd < 3 && this.gameEnded == true && this.collideCube.collider.flag == false){
-        //     this.playAudio(this.loseAudio); 
-        //     this.player.translate(vec3.fromValues(0, -0.1, 0));
-        // }
-        
-
-        if(this.timeSinceEnd < 5.5 && this.gameEnded == true){
+        if (this.timeSinceEnd < 5.5 && this.gameEnded == true) {
             this.player.translate(vec3.fromValues(0, -0.1, 0));
         }
 

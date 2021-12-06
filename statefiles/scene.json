@@ -2,10 +2,66 @@
     {
         "objects": [
             {
+                "name": "sweep",
+                "material": {
+                  "diffuse": [
+                    1.0,
+                    0,
+                    0
+                  ],
+                  "ambient": [
+                    0.3,
+                    0.3,
+                    0.3
+                  ],
+                  "specular": [
+                    0.5,
+                    0.5,
+                    0.5
+                  ],
+                  "n": 10.000002,
+                  "shaderType": 1,
+                  "alpha": 1
+                },
+                "type": "cube",
+                "position": [
+                  -0.50,
+                  0,
+                  2
+                ],
+                "scale": [
+                  3,
+                  0.5,
+                  1
+                ],
+                "diffuseTexture": "default.jpg",
+                "normalTexture": "defaultNorm.jpg",
+                "rotation": [
+                  -1,
+                  1.518773551367758e-8,
+                  -0.000014083019777899608,
+                  0,
+                  1.518794157107095e-8,
+                  1,
+                  -1.518794157107095e-8,
+                  0,
+                  0.000014083019777899608,
+                  -1.5188158286605358e-8,
+                  -1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "parent": null,
+                "model": null
+              },
+            {
                 "name": "collideCube",
                 "material": {
                     "diffuse": [
-                        1.8784313725490196,
+                        0.8784313725490196,
                         0,
                         0
                     ],
