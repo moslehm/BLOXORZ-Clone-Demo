@@ -1,14 +1,14 @@
 class Board {
     constructor(z, x) {
-        // Hard coded level for now
+        // Hard coded level for now -- make bridge NOT playable 
         this.board = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                     [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
-                     [0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0],
-                     [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0],
-                     [0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 1, 0],
-                     [0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
-                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0],
-                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
+                      [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+                      [0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0],
+                      [0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0],
+                      [0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 1, 0],
+                      [0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
         this.pos1 = [z * -2 + 2, x * -2 + 1];
         this.pos2 = [undefined, undefined];
         // board[posY][posX] = 2;
@@ -16,6 +16,18 @@ class Board {
         this.sideways = 0;
         // 0 = game in progress, 1 = player lost, 2 = player won
         this.state = 0;
+    }
+
+    //update the board to make bridge playable 
+    boardUpdate() {
+        this.board = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+                      [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0],
+                      [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0],
+                      [0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 1, 0],
+                      [0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
     }
 
     movePlayer(direction) {
@@ -38,8 +50,9 @@ class Board {
                     this.sideways = 0;
                     this.pos1 = [y1, x1 - 1];
                     this.pos2 = [undefined, undefined];
-                    if (board[this.pos1[0]][this.pos1[1]] === 2){
+                    if (board[this.pos1[0]][this.pos1[1]] === 2) {
                         this.state = 2;
+                        console.log("YOU WIN"); 
                     }
                 } else {
                     this.state = 1;
@@ -57,8 +70,9 @@ class Board {
                     this.sideways = 0;
                     this.pos1 = [y2, x2 + 1];
                     this.pos2 = [undefined, undefined];
-                    if (board[this.pos1[0]][this.pos1[1]] === 2){
+                    if (board[this.pos1[0]][this.pos1[1]] === 2) {
                         this.state = 2;
+                        console.log("YOU WIN"); 
                     }
                 } else {
                     this.state = 1;
@@ -76,8 +90,9 @@ class Board {
                     this.sideways = 0;
                     this.pos1 = [y1 - 1, x1];
                     this.pos2 = [undefined, undefined];
-                    if (board[this.pos1[0]][this.pos1[1]] === 2){
+                    if (board[this.pos1[0]][this.pos1[1]] === 2) {
                         this.state = 2;
+                        console.log("YOU WIN"); 
                     }
                 } else {
                     this.state = 1;
@@ -95,8 +110,9 @@ class Board {
                     this.sideways = 0;
                     this.pos1 = [y2 + 1, x2];
                     this.pos2 = [undefined, undefined];
-                    if (board[this.pos1[0]][this.pos1[1]] === 2){
+                    if (board[this.pos1[0]][this.pos1[1]] === 2) {
                         this.state = 2;
+                        console.log("YOU WIN"); 
                     }
                 } else {
                     this.state = 1;
@@ -112,6 +128,16 @@ class Board {
         this.pos2 = [undefined, undefined];
         this.sideways = 0;
         this.state = 0;
+
+        // reset the board 
+        this.board = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+                      [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+                      [0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0],
+                      [0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0],
+                      [0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 1, 0],
+                      [0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0],
+                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
     }
 
     // Takes in the world coordinate of the tile and the value to be assigned
