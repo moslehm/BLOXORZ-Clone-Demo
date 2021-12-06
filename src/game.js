@@ -17,6 +17,8 @@ class Game {
         this.player.rolling = 0;
         this.allowInput = 1;
         this.timeSinceLoss = 0;
+        this.bridgeTile1.material.alpha = 0.1;  // update transparencies of the bridge
+        this.bridgeTile2.material.alpha = 0.1; 
     }
 
     // AUTO MOVE THE CUBE -- translates back and forth -- collision object
@@ -26,7 +28,6 @@ class Game {
         if (this.collideCube.model.position[2] > 2) {
             this.direction = -0.02;
         }
-
 
         // if starting position
         if (this.collideCube.model.position[2] == -0.5) {
@@ -40,6 +41,7 @@ class Game {
         return (this.direction);
     }
 
+    /*
     wallDown() {
         this.wall.translate(vec3.fromValues(0, -0.5, 0));
     }
@@ -67,7 +69,7 @@ class Game {
             3 * 1000 //seconds change this later
         );
 
-    }
+    }*/
 
 
     // // toggle wall when button is pressed
@@ -192,8 +194,10 @@ class Game {
         this.player = getObject(this.state, "playerBlock");
         this.collideCube = getObject(this.state, "collideCube"); // OUR NPC CUBE
         this.button = getObject(this.state, "button1"); // BUTTON
+        this.bridgeTile1 = getObject(this.state, "tile19"); // BRIDGE TILE
+        this.bridgeTile2 = getObject(this.state, "tile17");  // BRIDGE TILE
         // Get the npc wall
-        this.wall = getObject(this.state, "wall1");
+        // this.wall = getObject(this.state, "wall1");
         //const wall = getObject(this.state, "wall1");
         // const player = getObject(this.state, "tempCube");
         //let camera = this.state.camera;
@@ -449,6 +453,8 @@ class Game {
         this.collideCube.rotate('y', deltaTime * 1);
         this.collideCube.rotate('z', deltaTime * 1);
 
+        // tiles for our
+
         // Get the npc wall
         // this.wall = getObject(this.state, "wall1");
         // this.button = getObject(this.state, "button1");
@@ -462,12 +468,20 @@ class Game {
         this.checkCollision(this.button); //use key presses for now...
         if (this.button.collider.flag == true) {
             //console.log("button collision");
-            if (this.counter < 1) {
-                this.wallDown();
-                this.disableButton();
-                this.setTimer()
-            }
-            this.counter += 1;
+            // if (this.counter < 1) {
+            //     this.wallDown();
+            //     this.disableButton();
+            //     this.setTimer()
+            // }
+            // this.counter += 1;
+
+            //set transparency of the bridge 
+            this.bridgeTile1.material.alpha = 1;
+            this.bridgeTile2.material.alpha = 1;
+
+            // update the board. 
+            this.board.boardUpdate(); 
+
         }
 
 
