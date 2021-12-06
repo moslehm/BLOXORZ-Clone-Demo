@@ -46,6 +46,11 @@ class Game {
         return (this.direction);
     }
 
+    // play the audio
+    playAudio(audio){
+        audio.play(); 
+    }
+
     /*
     wallDown() {
         this.wall.translate(vec3.fromValues(0, -0.5, 0));
@@ -117,7 +122,7 @@ class Game {
     // example - create a collider on our object with various fields we might need (you will likely need to add/remove/edit how this works)
     createSphereCollider(object, radius, onCollide = null) {
         object.collider = {
-            type: "SPHERE",
+            type: "CUBE",
             radius: radius,
             onCollide: onCollide ? onCollide : (otherObject) => {
                 console.log(`Collided with ${otherObject.name}`);
@@ -187,6 +192,12 @@ class Game {
     async onStart() {
         console.log("On start");
 
+        // AUDIO LINKS https://simpleguics2pygame.readthedocs.io/en/latest/_static/links/snd_links.html
+
+        this.crashAudio = new Audio('http://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/explosion_02.wav'); 
+        this.winAudio = new Audio('http://commondatastorage.googleapis.com/codeskulptor-assets/week7-brrring.m4a'); 
+        this.loseAudio = new Audio('http://www.utc.fr/si28/ProjetsUpload/P2006_si28p004/flash_puzzle/sons/rush/fall-odd.wav'); 
+
         // this just prevents the context menu from popping up when you right click
         document.addEventListener("contextmenu", (e) => {
             e.preventDefault();
@@ -223,7 +234,7 @@ class Game {
 
         // collision detection radius
         //this.createSphereCollider(player, 0.25);
-        this.createSphereCollider(this.collideCube, 0.50);
+        this.createSphereCollider(this.collideCube, 0.40);
         this.createSphereCollider(this.button, 0.01);
 
         //half block for collision detect
@@ -266,7 +277,7 @@ class Game {
                             player.rotate('z', -90.0 * Math.PI / 180.0);
                             player.translate(vec3.fromValues(0.5, 0.0, 0.0));
                         }
-                        this.board.movePlayer("left", this.player);
+                        this.board.movePlayer("left");
                         break;
                     case "d":
                         if (!player.rolling) {
@@ -282,7 +293,7 @@ class Game {
                             player.rotate('z', 90.0 * Math.PI / 180.0);
                             player.translate(vec3.fromValues(-0.5, 0.0, 0.0));
                         }
-                        this.board.movePlayer("right", this.player);
+                        this.board.movePlayer("right");
                         break;
                     case "w":
                         if (!player.rolling) {
@@ -298,7 +309,7 @@ class Game {
                             player.rotate('x', 90.0 * Math.PI / 180.0);
                             player.translate(vec3.fromValues(0.0, 0.0, 0.5));
                         }
-                        this.board.movePlayer("up", this.player);
+                        this.board.movePlayer("up");
                         break;
                     case "s":
                         if (!player.rolling) {
@@ -314,7 +325,7 @@ class Game {
                             player.rotate('x', -90.0 * Math.PI / 180.0);
                             player.translate(vec3.fromValues(0.0, 0.0, -0.5));
                         }
-                        this.board.movePlayer("down", this.player);
+                        this.board.movePlayer("down");
                         break;
                     case "arrowright":
                         // Get look-at vector by subtracting position from center and normalizing
@@ -502,6 +513,7 @@ class Game {
         // collision w the NPC CUBE
         this.checkCollision(this.collideCube);
         if (this.collideCube.collider.flag == true) {
+            this.playAudio(this.crashAudio); 
             this.collideCube.material.alpha = 1; 
             this.board.state = 1;
         }
@@ -513,13 +525,22 @@ class Game {
         if (this.gameEnded && !this.resultsDisplayed) {
             if (this.board.state === 1){
                 console.log("YOU DIED");
+                this.playAudio(this.loseAudio); 
             } else {
                 console.log("YOU WON");
+                this.playAudio(this.winAudio); 
+                this.player.translate(vec3.fromValues(0, -0.1, 0));
             }
             this.resultsDisplayed = true;
         }
 
-        if(this.timeSinceEnd < 3 && this.gameEnded == true && this.collideCube.collider.flag == false){
+        // if(this.timeSinceEnd < 3 && this.gameEnded == true && this.collideCube.collider.flag == false){
+        //     this.playAudio(this.loseAudio); 
+        //     this.player.translate(vec3.fromValues(0, -0.1, 0));
+        // }
+        
+
+        if(this.timeSinceEnd < 3 && this.gameEnded == true){
             this.player.translate(vec3.fromValues(0, -0.1, 0));
         }
 
