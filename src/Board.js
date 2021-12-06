@@ -146,4 +146,5 @@ class Board {
         x = x * -2 + 1
         board[y][x] = value;
     }
+
 }

@@ -19,6 +19,8 @@ class Game {
         this.player.rolling = 0;
         this.bridgeTile1.material.alpha = 0.1;  // update transparencies of the bridge
         this.bridgeTile2.material.alpha = 0.1; 
+        this.collideCube.material.alpha = 0.5; 
+
         this.gameEnded = false;
         this.resultsDisplayed = false;
         this.timeSinceEnd = 0;
@@ -73,6 +75,14 @@ class Game {
         );
 
     }*/
+
+
+    // fallDown(){
+    //     this.playerFall.rotate('x', deltaTime * 1);
+    //     this.playerFall.rotate('y', deltaTime * 1);
+    //     this.playerFall.rotate('z', deltaTime * 1);
+    //     this.playerFall.translate(vec3.fromValues(0, -0.2, 0));
+    // }
 
 
     // // toggle wall when button is pressed
@@ -198,6 +208,8 @@ class Game {
         this.button = getObject(this.state, "button1"); // BUTTON
         this.bridgeTile1 = getObject(this.state, "tile19"); // BRIDGE TILE
         this.bridgeTile2 = getObject(this.state, "tile17");  // BRIDGE TILE
+
+
         // Get the npc wall
         // this.wall = getObject(this.state, "wall1");
         //const wall = getObject(this.state, "wall1");
@@ -254,7 +266,7 @@ class Game {
                             player.rotate('z', -90.0 * Math.PI / 180.0);
                             player.translate(vec3.fromValues(0.5, 0.0, 0.0));
                         }
-                        this.board.movePlayer("left");
+                        this.board.movePlayer("left", this.player);
                         break;
                     case "d":
                         if (!player.rolling) {
@@ -270,7 +282,7 @@ class Game {
                             player.rotate('z', 90.0 * Math.PI / 180.0);
                             player.translate(vec3.fromValues(-0.5, 0.0, 0.0));
                         }
-                        this.board.movePlayer("right");
+                        this.board.movePlayer("right", this.player);
                         break;
                     case "w":
                         if (!player.rolling) {
@@ -286,7 +298,7 @@ class Game {
                             player.rotate('x', 90.0 * Math.PI / 180.0);
                             player.translate(vec3.fromValues(0.0, 0.0, 0.5));
                         }
-                        this.board.movePlayer("up");
+                        this.board.movePlayer("up", this.player);
                         break;
                     case "s":
                         if (!player.rolling) {
@@ -302,7 +314,7 @@ class Game {
                             player.rotate('x', -90.0 * Math.PI / 180.0);
                             player.translate(vec3.fromValues(0.0, 0.0, -0.5));
                         }
-                        this.board.movePlayer("down");
+                        this.board.movePlayer("down", this.player);
                         break;
                     case "arrowright":
                         // Get look-at vector by subtracting position from center and normalizing
@@ -490,6 +502,7 @@ class Game {
         // collision w the NPC CUBE
         this.checkCollision(this.collideCube);
         if (this.collideCube.collider.flag == true) {
+            this.collideCube.material.alpha = 1; 
             this.board.state = 1;
         }
 
@@ -505,6 +518,11 @@ class Game {
             }
             this.resultsDisplayed = true;
         }
+
+        if(this.timeSinceEnd < 3 && this.gameEnded == true && this.collideCube.collider.flag == false){
+            this.player.translate(vec3.fromValues(0, -0.1, 0));
+        }
+
         if (this.timeSinceEnd >= 3) {
             this.reset();
         }
