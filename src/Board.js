@@ -113,4 +113,11 @@ class Board {
         this.sideways = 0;
         this.state = 0;
     }
+
+    // Takes in the world coordinate of the tile and the value to be assigned
+    setTile(z, x, value){
+        y = z * -2 + 2
+        x = x * -2 + 1
+        board[y][x] = value;
+    }
 }
