@@ -20,7 +20,7 @@
                     0.5
                   ],
                   "n": 10.000002,
-                  "shaderType": 1,
+                  "shaderType": 3,
                   "alpha": 1
                 },
                 "type": "cube",
@@ -34,8 +34,8 @@
                   0.5,
                   1
                 ],
-                "diffuseTexture": "default.jpg",
-                "normalTexture": "defaultNorm.jpg",
+                "diffuseTexture": "plywood.jpg",
+                "normalTexture": "checkerNorm.jpg",
                 "rotation": [
                   -1,
                   1.518773551367758e-8,
@@ -76,8 +76,8 @@
                         0.5
                     ],
                     "n": 10.000002,
-                    "shaderType": 1,
-                    "alpha": 0.5
+                    "shaderType": 3,
+                    "alpha": 1.0
                 },
                 "type": "cubeCustom",
                 "position": [
@@ -90,8 +90,8 @@
                     1.25,
                     1.25
                 ],
-                "diffuseTexture": "default.jpg",
-                "normalTexture": "defaultNorm.jpg",
+                "diffuseTexture": "plywood.jpg",
+                "normalTexture": "checkerNorm.jpg",
                 "rotation": [
                     1,
                     0,
@@ -3057,9 +3057,9 @@
                     1
                 ],
                 "position": [
-                    0,
+                    -1.0,
                     5,
-                    0
+                    -0.5
                 ],
                 "strength": 2,
                 "quadratic": 0.035,

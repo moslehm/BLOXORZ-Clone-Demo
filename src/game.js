@@ -21,7 +21,6 @@ class Game {
         this.player.rolling = 0;
         this.bridgeTile1.material.alpha = 0.1;  // update transparencies of the bridge
         this.bridgeTile2.material.alpha = 0.1;
-        this.collideCube.material.alpha = 0.5;
 
         this.gameEnded = false;
         this.resultsDisplayed = false;
@@ -187,18 +186,18 @@ class Game {
                 vec3.transformMat4(B, B, otherObject.modelMatrix);
 
                 var distance = vec3.distance(A, B);
-                var test = 0; 
+                var test = 0;
 
-                // test again if its still large 
+                // test again if its still large
                 if (distance > (object.collider.radius + otherObject.collider.radius)) {
                     var B = vec3.fromValues(otherObject.model.position[0] + 0.50, otherObject.model.position[1], otherObject.model.position[2] +0.40);
                     vec3.transformMat4(B, B, otherObject.modelMatrix);
 
-                    test = 1; 
+                    test = 1;
                     distance = vec3.distance(A, B);
-                    //console.log("IF", distance); 
+                    //console.log("IF", distance);
                 }
-                
+
 
             } else {
                 var A = vec3.fromValues(object.model.position[0], object.model.position[1], object.model.position[2]);
@@ -218,9 +217,9 @@ class Game {
 
                 if (object.name == 'sweep') {
                     console.log("collide", object.collider.flag);
-                    
+
                 }
-                console.log(test); 
+                console.log(test);
                 //console.log("collide", object.collider.flag, object.name, otherObject.name);
             }
         }
@@ -556,7 +555,7 @@ class Game {
 
         }
 
-        // check sweeper collision 
+        // check sweeper collision
         this.checkCollision(this.sweeper);
 
 
@@ -566,10 +565,6 @@ class Game {
         if (this.collideCube.collider.flag == true || this.sweeper.collider.flag == true) {
             // IF WE COLLIDED WE DIE, play audio + switch the board state
             this.playAudio(this.crashAudio);
-            if(this.collideCube.collider.flag == true ){ 
-                this.collideCube.material.alpha = 1; // IF IT WAS THE CUBE, SET TRANSPARENCY 
-            }
-
             this.board.state = 1;
         }
 
