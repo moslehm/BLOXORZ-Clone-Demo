@@ -1,6 +1,6 @@
 class Board {
     constructor(z, x) {
-        // Hard coded level for now -- make bridge NOT playable 
+        // Hard coded level for now -- make bridge NOT playable
         this.board = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                       [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
                       [0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0],
@@ -18,7 +18,7 @@ class Board {
         this.state = 0;
     }
 
-    //update the board to make bridge playable 
+    //update the board to make bridge playable
     boardUpdate() {
         this.board = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                       [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
@@ -52,7 +52,6 @@ class Board {
                     this.pos2 = [undefined, undefined];
                     if (board[this.pos1[0]][this.pos1[1]] === 2) {
                         this.state = 2;
-                        console.log("YOU WIN"); 
                     }
                 } else {
                     this.state = 1;
@@ -72,7 +71,6 @@ class Board {
                     this.pos2 = [undefined, undefined];
                     if (board[this.pos1[0]][this.pos1[1]] === 2) {
                         this.state = 2;
-                        console.log("YOU WIN"); 
                     }
                 } else {
                     this.state = 1;
@@ -92,7 +90,6 @@ class Board {
                     this.pos2 = [undefined, undefined];
                     if (board[this.pos1[0]][this.pos1[1]] === 2) {
                         this.state = 2;
-                        console.log("YOU WIN"); 
                     }
                 } else {
                     this.state = 1;
@@ -112,7 +109,6 @@ class Board {
                     this.pos2 = [undefined, undefined];
                     if (board[this.pos1[0]][this.pos1[1]] === 2) {
                         this.state = 2;
-                        console.log("YOU WIN"); 
                     }
                 } else {
                     this.state = 1;
@@ -129,8 +125,8 @@ class Board {
         this.sideways = 0;
         this.state = 0;
 
-        // reset the board 
-        this.board = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+        // reset the board
+        this.board = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                       [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
                       [0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0],
                       [0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0],
