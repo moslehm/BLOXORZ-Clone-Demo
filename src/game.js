@@ -298,8 +298,6 @@ class Game {
         // 0 = standing, 1 = along x, 2 = along z
         player.rolling = 0;
 
-        let worldToLocalRotation = mat4.transpose(mat4.create(), player.model.rotation);
-
         // example - setting up a key press event to move an object in the scene
         document.addEventListener("keydown", (e) => {
             e.preventDefault();
