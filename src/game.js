@@ -4,7 +4,7 @@ class Game {
         this.spawnedObjects = [];
         this.collidableObjects = [];
         this.direction = 0.02;  // for the npc cube translation
-        this.direction2 = 0.03;
+        this.direction2 = 0.05;
         this.wallUp = 0.01; // wall for button interaction
         this.timeSinceEnd = 0;
         this.resultsDisplayed = false;
@@ -59,17 +59,17 @@ class Game {
 
         // if hit 1, switch directions
         if (this.sweeper.model.position[2] > 2) {
-            this.direction2 = -0.03;
+            this.direction2 = -0.05;
         }
 
         // if starting position
         if (this.sweeper.model.position[2] == -3) {
             //this.wall.translate(vec3.fromValues(0, 0.02, 0));
-            this.direction2 = 0.03;
+            this.direction2 = 0.05;
         }
 
         if (this.sweeper.model.position[2] < -3) {
-            this.direction2 = 0.03;
+            this.direction2 = 0.05;
         }
 
         return (this.direction2);
