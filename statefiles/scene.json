@@ -520,20 +520,20 @@
                 "name": "button1",
                 "material": {
                     "diffuse": [
-                        0.5686274509803921,
-                        0.12549019607843137,
-                        0.6549019607843137
-                    ],
-                    "ambient": [
-                        0.3,
-                        0.3,
-                        0.3
-                    ],
-                    "specular": [
+                        0.6588235294117647,
+                        0.01568627450980392,
+                        0.9882352941176471
+                      ],
+                      "ambient": [
+                        0.1,
+                        0.1,
+                        0.1
+                      ],
+                      "specular": [
                         0.5,
                         0.5,
                         0.5
-                    ],
+                      ],
                     "n": 10.000002,
                     "shaderType": 1,
                     "alpha": 1
@@ -549,7 +549,7 @@
                     0.0625,
                     0.4
                 ],
-                "diffuseTexture": "default.jpg",
+                "diffuseTexture": "concreteBricks.jpg",
                 "normalTexture": "defaultNorm.jpg",
                 "rotation": [
                     1,
