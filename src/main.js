@@ -287,7 +287,7 @@ function startRendering(gl, state) {
  * @purpose Iterate through game objects and render the objects aswell as update uniforms
  */
 function drawScene(gl, deltaTime, state) {
-    gl.clearColor(state.settings.backgroundColor[0], state.settings.backgroundColor[1], state.settings.backgroundColor[2], 1.0); // Here we are drawing the background color that is saved in our state
+    gl.clearColor(60/255, 60/255, 60/255, 1.0); // Here we are drawing the background color that is saved in our state
     gl.enable(gl.DEPTH_TEST); // Enable depth testing
     gl.depthFunc(gl.LEQUAL); // Near things obscure far things
     gl.disable(gl.CULL_FACE); // Cull the backface of our objects to be more efficient
