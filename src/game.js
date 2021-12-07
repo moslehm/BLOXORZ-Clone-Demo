@@ -11,6 +11,9 @@ class Game {
         this.gameEnded = false;
         this.numberOfMoves = 0;
         this.bestAttempt = 99999;
+
+        // Save original camera values
+        this.originalCameras = JSON.parse(JSON.stringify(this.state.cameras));
     }
 
     reset() {
@@ -31,6 +34,10 @@ class Game {
         this.buttonCount = 0;
         this.numberOfMoves = 0;
         document.getElementById("movesText").innerHTML = "Moves: 0</b>";
+
+        // Reset all camera positions and set the main camera to defaultCamera
+        this.state.cameras = JSON.parse(JSON.stringify(this.originalCameras));
+        this.state.camera = this.state.cameras[0];
     }
 
     // AUTO MOVE THE CUBE -- translates back and forth -- collision object
