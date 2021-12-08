@@ -214,7 +214,7 @@ class Player extends RenderObject {
         } else if (axis == 'z') {
             axisVector = vec3.fromValues(0, 0, 1)
         }
-        let worldToLocalRotation = mat4.transpose(mat4.create(), this.model.rotation)
+        let worldToLocalRotation = mat4.transpose([], this.model.rotation)
         vec3.transformMat4(axisVector, axisVector, worldToLocalRotation);
         mat4.rotate(this.model.rotation, this.model.rotation, angle, axisVector);
     }
