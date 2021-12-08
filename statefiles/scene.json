@@ -3050,46 +3050,46 @@
         ],
         "pointLights": [
             {
-                "name": "pointLight1",
-                "colour": [
-                    1,
-                    1,
-                    1
-                ],
-                "position": [
-                    -1.0,
-                    5,
-                    -0.5
-                ],
-                "strength": 2,
-                "quadratic": 0.035,
-                "linear": 0.09,
-                "constant": 1,
-                "nearPlane": 0.5,
-                "farPlane": 100,
-                "shadow": 0
+              "name": "pointLight1",
+              "colour": [
+                0.8627450980392157,
+                0.4745098039215686,
+                0.5137254901960784
+              ],
+              "position": [
+                3,
+                5,
+                0
+              ],
+              "strength": 3,
+              "quadratic": 0.035,
+              "linear": 0.09,
+              "constant": 1,
+              "nearPlane": 0.5,
+              "farPlane": 100,
+              "shadow": 0
             },
             {
-                "name": "pointLight2",
-                "colour": [
-                    1,
-                    1,
-                    1
-                ],
-                "position": [
-                    -8,
-                    5,
-                    0
-                ],
-                "strength": 2,
-                "quadratic": 0.035,
-                "linear": 0.09,
-                "constant": 1,
-                "nearPlane": 0.5,
-                "farPlane": 100,
-                "shadow": 0
+              "name": "pointLight2",
+              "colour": [
+                0.12156862745098039,
+                0.1450980392156863,
+                0.8784313725490196
+              ],
+              "position": [
+                -8,
+                5,
+                0
+              ],
+              "strength": 2,
+              "quadratic": 0.035,
+              "linear": 0.09,
+              "constant": 1,
+              "nearPlane": 2,
+              "farPlane": 100,
+              "shadow": 0
             }
-        ],
+          ],
         "settings": {
             "backgroundColor": [
                 0,
