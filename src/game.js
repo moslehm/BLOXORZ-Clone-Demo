@@ -422,7 +422,7 @@ class Game {
                             let new_at = vec3.normalize([], vec3.subtract([], new_center, state.camera.position));
                             vec3.normalize(state.camera.up, vec3.cross([], right, new_at));
                         } else {
-                            let at = vec3.scale([], vec3.normalize([], vec3.subtract([], state.camera.position, state.camera.center)), -0.1);
+                            let at = vec3.scale([], vec3.normalize([], vec3.subtract([], state.camera.center, state.camera.position)), 0.1);
                             vec3.add(state.camera.center, state.camera.center, at);
                             vec3.add(state.camera.position, state.camera.position, at);
                         }
